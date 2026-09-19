@@ -31,7 +31,7 @@ export const AboutSection: React.FC = () => {
                       Hyderabad's Dedicated Deep Cleaning Crew
                     </h4>
                     <p className="text-[11px] text-slate-500">
-                      Standardized SOPs &bull; Eco-Friendly Agents &bull; Kavuri Hills
+                      Standardized SOPs &bull; Eco-Friendly &bull; Hyderabad
                     </p>
                   </div>
                 </div>
@@ -87,7 +87,7 @@ export const AboutSection: React.FC = () => {
                     Location
                   </div>
                   <div className="text-xs font-bold text-teal-950 mt-0.5 leading-snug">
-                    Kavuri Hills, Madhapur, Gafoornagar, Hyderabad – 500081
+                    Hyderabad, Telangana
                   </div>
                 </div>
               </div>

@@ -9,16 +9,16 @@ interface ServiceAreasProps {
 
 export const ServiceAreas: React.FC<ServiceAreasProps> = () => {
   const localities = [
-    "Kavuri Hills (Headquarters)",
-    "Madhapur",
-    "Gafoornagar",
     "Jubilee Hills",
     "Banjara Hills",
     "Hitech City",
     "Gachibowli",
     "Kondapur",
+    "Madhapur",
     "Manikonda",
-    "And nearby Hyderabad areas",
+    "Kukatpally",
+    "Begumpet",
+    "And all across Hyderabad",
   ];
 
   return (
@@ -42,7 +42,7 @@ export const ServiceAreas: React.FC<ServiceAreasProps> = () => {
             </h2>
 
             <p className="text-sm text-slate-300 mb-6 leading-relaxed">
-              Based in Kavuri Hills, Madhapur, our mobile cleaning teams are deployed across prime residential and commercial hubs in Hyderabad with fast response times.
+              Our mobile cleaning teams are deployed across all prime residential and commercial hubs in Hyderabad with fast response times.
             </p>
 
             {/* Checkmark localities 2-column grid */}
@@ -53,41 +53,6 @@ export const ServiceAreas: React.FC<ServiceAreasProps> = () => {
                   <span>{area}</span>
                 </div>
               ))}
-            </div>
-
-            {/* Styled Map Card & Directions Button */}
-            <div className="bg-teal-900/60 border border-teal-800/80 rounded-2xl overflow-hidden p-3 shadow-xl">
-              <div className="h-56 sm:h-64 w-full rounded-xl overflow-hidden relative border border-teal-700/50">
-                <iframe
-                  title="Hari Krishna Deep Cleaning Services Hyderabad Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.323635787163!2d78.3908!3d17.4399!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9158f201b205%3A0x11e403d6d06144e!2sKavuri%20Hills%2C%20Madhapur%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                  className="w-full h-full border-0 filter contrast-105"
-                  loading="lazy"
-                  allowFullScreen
-                />
-              </div>
-
-              <div className="mt-3 px-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                <div>
-                  <div className="font-bold text-white flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-gold-400" />
-                    <span>{companyInfo.shortAddress}</span>
-                  </div>
-                  <div className="text-[11px] text-teal-300">
-                    Kavuri Hills Rd, Sri Rama Colony, Hyderabad
-                  </div>
-                </div>
-
-                <a
-                  href={companyInfo.mapsDirectionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-gold-500 hover:bg-gold-400 text-teal-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors self-start sm:self-auto shadow-sm"
-                >
-                  <Navigation className="w-3.5 h-3.5" />
-                  <span>Get Directions</span>
-                </a>
-              </div>
             </div>
 
             {/* Quick Contact Links */}

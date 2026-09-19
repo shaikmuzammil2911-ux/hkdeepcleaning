@@ -23,7 +23,7 @@ export const Footer: React.FC = () => {
               </div>
               
               <p className="text-xs text-slate-300 leading-relaxed mb-4">
-                Professional Deep Cleaning Services based in Kavuri Hills, Hyderabad. Dedicated to creating cleaner, healthier, and happier living and working environments for homes, villas, offices, and commercial properties.
+                Professional Deep Cleaning Services based in Hyderabad, Telangana. Dedicated to creating cleaner, healthier, and happier living and working environments for homes, villas, offices, and commercial properties.
               </p>
 
               <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold mb-6">
@@ -172,7 +172,7 @@ export const Footer: React.FC = () => {
             </span>
             <span className="text-teal-700">|</span>
             <span className="text-gold-400 font-medium">
-              Kavuri Hills, Madhapur &bull; 500081
+              Hyderabad, Telangana
             </span>
           </div>
         </div>

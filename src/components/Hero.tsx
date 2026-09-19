@@ -122,7 +122,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
             {/* Micro guarantee text */}
             <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
               <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
-              <span>Direct Booking &bull; Hyderabad Local Specialists &bull; Kavuri Hills</span>
+              <span>Direct Booking &bull; Hyderabad Local Specialists &bull; Serving All Neighborhoods</span>
             </div>
 
           </div>
@@ -160,7 +160,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                       Hyderabad Service Hub
                     </div>
                     <div className="text-xs text-slate-200 font-medium">
-                      Kavuri Hills &bull; Madhapur &bull; Jubilee Hills
+                      All Hyderabad Zones &bull; Gachibowli &bull; Hitech City
                     </div>
                   </div>
                   <button

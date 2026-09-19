@@ -88,36 +88,20 @@ export const ContactPage: React.FC = () => {
 
               {/* Location Card */}
               <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-                <div className="flex items-start gap-3 mb-3">
+                <div className="flex items-start gap-3">
                   <div className="w-10 h-10 rounded-xl bg-teal-800 text-gold-400 flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-[10px] font-extrabold uppercase text-slate-400">Headquarters Address</div>
-                    <div className="text-xs font-semibold text-teal-950 mt-0.5 leading-snug">
+                    <div className="text-[10px] font-extrabold uppercase text-slate-400">Location</div>
+                    <div className="text-sm font-bold text-teal-950 mt-0.5 leading-snug">
                       {companyInfo.address}
+                    </div>
+                    <div className="text-xs text-slate-500 mt-1">
+                      Serving all residential &amp; commercial areas in Hyderabad
                     </div>
                   </div>
                 </div>
-
-                <div className="h-44 w-full rounded-xl overflow-hidden border border-slate-200 mb-3">
-                  <iframe
-                    title="Hari Krishna Deep Cleaning Location"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.323635787163!2d78.3908!3d17.4399!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9158f201b205%3A0x11e403d6d06144e!2sKavuri%20Hills%2C%20Madhapur%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                    className="w-full h-full border-0"
-                    loading="lazy"
-                  />
-                </div>
-
-                <a
-                  href={companyInfo.mapsDirectionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gold w-full py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5"
-                >
-                  <Navigation className="w-3.5 h-3.5" />
-                  <span>Get Driving Directions</span>
-                </a>
               </div>
 
             </div>

@@ -70,7 +70,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             Schedule a Cleaning Service
           </h3>
           <p className="text-xs text-slate-300 mt-0.5">
-            Serving Kavuri Hills, Madhapur, Gachibowli &amp; across Hyderabad
+            Serving Gachibowli, Madhapur, Hitech City &amp; across Hyderabad
           </p>
 
           <div className="flex items-center gap-3 mt-3 text-[11px] text-emerald-300 font-medium">

@@ -25,67 +25,8 @@ export const ServiceAreasPage: React.FC<ServiceAreasPageProps> = ({ onOpenBookin
             Cleaning Services Across Hyderabad
           </h1>
           <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            From our Kavuri Hills hub, we deliver high-grade deep cleaning solutions to prime residential, gated communities, and commercial districts throughout Hyderabad.
+            We deliver high-grade deep cleaning solutions to prime residential areas, gated communities, and commercial districts throughout Hyderabad, Telangana.
           </p>
-        </div>
-      </section>
-
-      {/* Interactive Map & Office Highlight */}
-      <section className="py-12 bg-slate-50 border-b border-slate-200/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-200/80 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <div className="lg:col-span-5">
-              <span className="text-xs font-bold text-gold-600 uppercase tracking-wider">
-                Primary Operating Hub
-              </span>
-              <h2 className="text-2xl font-bold text-teal-950 mt-1 mb-3">
-                Kavuri Hills, Madhapur Base
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mb-4">
-                <strong>Address:</strong> {companyInfo.address}
-              </p>
-              <div className="space-y-2 text-xs text-slate-600 mb-6">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Rapid response dispatch for Kavuri Hills &amp; Madhapur</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Serving all major high-rise societies and tech parks</span>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-                <a
-                  href={companyInfo.mapsDirectionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-gold px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5"
-                >
-                  <Navigation className="w-3.5 h-3.5" />
-                  <span>Get Directions</span>
-                </a>
-                <a
-                  href={`tel:${companyInfo.phoneClean}`}
-                  className="btn-teal px-5 py-2.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5"
-                >
-                  <Phone className="w-3.5 h-3.5" />
-                  <span>Call Us</span>
-                </a>
-              </div>
-            </div>
-
-            <div className="lg:col-span-7 h-72 sm:h-80 rounded-2xl overflow-hidden border border-slate-200 shadow-inner">
-              <iframe
-                title="Hari Krishna Deep Cleaning Location Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.323635787163!2d78.3908!3d17.4399!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9158f201b205%3A0x11e403d6d06144e!2sKavuri%20Hills%2C%20Madhapur%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                className="w-full h-full border-0"
-                loading="lazy"
-              />
-            </div>
-
-          </div>
         </div>
       </section>
 
