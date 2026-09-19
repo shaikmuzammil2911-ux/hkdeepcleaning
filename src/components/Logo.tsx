@@ -15,30 +15,34 @@ export const Logo: React.FC<LogoProps> = ({
   const isDark = variant === 'dark' || variant === 'footer';
 
   const imgSize =
-    size === 'sm' ? 'w-10 h-10' : size === 'lg' ? 'w-16 h-16' : 'w-12 h-12';
+    size === 'sm'
+      ? 'w-12 h-12 sm:w-14 sm:h-14'
+      : size === 'lg'
+      ? 'w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28'
+      : 'w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20';
 
   return (
-    <Link to="/" className={`inline-flex items-center gap-2.5 group select-none ${className}`}>
-      {/* Actual HK Logo PNG */}
+    <Link to="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
+      {/* Actual HK Circular Logo PNG - Clean Transparent Outer Background */}
       <img
         src="/images/hk-logo.png"
         alt="Hari Krishna Cleaning Services Logo"
-        className={`${imgSize} object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-sm`}
+        className={`${imgSize} object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-md`}
       />
 
       {/* Brand Typography */}
-      <div className="flex flex-col justify-center text-left leading-none">
+      <div className="flex flex-col justify-center text-left leading-tight">
         <div className="flex items-baseline">
           <span
             className={`font-display font-extrabold tracking-tight ${
-              size === 'sm' ? 'text-lg' : size === 'lg' ? 'text-2xl' : 'text-xl'
-            } ${isDark ? 'text-white' : 'text-teal-800'}`}
+              size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
+            } ${isDark ? 'text-white' : 'text-teal-900'}`}
           >
             Hari
           </span>
           <span
-            className={`font-display font-extrabold tracking-tight ml-0.5 ${
-              size === 'sm' ? 'text-lg' : size === 'lg' ? 'text-2xl' : 'text-xl'
+            className={`font-display font-extrabold tracking-tight ml-1 ${
+              size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
             } text-gold-500`}
           >
             Krishna
@@ -48,7 +52,7 @@ export const Logo: React.FC<LogoProps> = ({
         <div className="flex items-center gap-1 mt-0.5">
           <span
             className={`font-sans font-bold uppercase tracking-wider ${
-              size === 'sm' ? 'text-[9px]' : size === 'lg' ? 'text-[11px]' : 'text-[9.5px]'
+              size === 'sm' ? 'text-[10px]' : size === 'lg' ? 'text-xs sm:text-sm' : 'text-[11px] sm:text-xs'
             } ${isDark ? 'text-emerald-300' : 'text-teal-700'}`}
           >
             DEEP CLEANING SERVICES
@@ -57,7 +61,7 @@ export const Logo: React.FC<LogoProps> = ({
 
         <div
           className={`font-sans font-medium italic mt-0.5 hidden sm:block ${
-            size === 'sm' ? 'text-[9px]' : 'text-[10px]'
+            size === 'sm' ? 'text-[10px]' : 'text-xs'
           } ${isDark ? 'text-slate-300' : 'text-slate-500'}`}
         >
           <span>A Cleaner Space</span>
@@ -68,3 +72,4 @@ export const Logo: React.FC<LogoProps> = ({
     </Link>
   );
 };
+

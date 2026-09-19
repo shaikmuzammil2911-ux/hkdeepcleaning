@@ -79,18 +79,17 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({ onFinish }) => {
               transform: 'scale(1.3)',
             }}
           />
-          {/* White card */}
+          {/* Glass emblem container */}
           <div
-            className="relative bg-white rounded-3xl p-5 shadow-2xl flex items-center justify-center"
+            className="relative bg-slate-900/50 backdrop-blur-md rounded-full p-6 shadow-2xl flex items-center justify-center border border-gold-500/40"
             style={{
               boxShadow: '0 0 60px rgba(20,114,113,0.4), 0 25px 50px rgba(0,0,0,0.5)',
-              border: '1px solid rgba(212,175,55,0.3)',
             }}
           >
             <img
               src="/images/hk-logo.png"
               alt="Hari Krishna Cleaning Services"
-              className="w-36 h-36 object-contain"
+              className="w-44 h-44 object-contain filter drop-shadow-xl"
               style={{ animation: 'logoFloat 3s ease-in-out infinite' }}
             />
           </div>
