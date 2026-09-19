@@ -1,0 +1,95 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Sparkles, Home, Building2, HardHat, Bath, Utensils, Castle, Truck } from 'lucide-react';
+import { servicesData } from '../data/servicesData';
+import { ServiceCard } from './ServiceCard';
+
+interface ServiceGridProps {
+  onOpenBooking: (serviceSlug?: string) => void;
+  showAll?: boolean;
+}
+
+export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking }) => {
+  const getServiceIcon = (name: string) => {
+    switch (name) {
+      case 'Home': return <Home className="w-5 h-5" />;
+      case 'Castle': return <Castle className="w-5 h-5" />;
+      case 'HardHat': return <HardHat className="w-5 h-5" />;
+      case 'Building2': return <Building2 className="w-5 h-5" />;
+      case 'Utensils': return <Utensils className="w-5 h-5" />;
+      case 'Bath': return <Bath className="w-5 h-5" />;
+      case 'Sparkles': return <Sparkles className="w-5 h-5" />;
+      case 'Truck': return <Truck className="w-5 h-5" />;
+      default: return <Sparkles className="w-5 h-5" />;
+    }
+  };
+
+  return (
+    <section id="services-section" className="py-16 sm:py-20 bg-slate-50/60 relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Section Header */}
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 bg-teal-100/80 px-3.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-widest text-teal-900 mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-gold-600" />
+            <span>OUR SERVICES</span>
+          </div>
+          <h2 className="font-display font-extrabold text-2xl sm:text-4xl lg:text-4xl text-teal-950 tracking-tight mb-3">
+            8+ Professional Cleaning Services
+          </h2>
+          <p className="text-sm sm:text-base text-slate-600">
+            We offer a wide range of deep-cleaning solutions for homes, offices, villas and commercial spaces in Hyderabad.
+          </p>
+        </div>
+
+        {/* Mobile Quick Service Buttons (Matching image copy.png mobile layout) */}
+        <div className="grid grid-cols-2 gap-2.5 mb-8 md:hidden">
+          {servicesData.map((svc) => (
+            <Link
+              key={`mob-${svc.id}`}
+              to={`/services/${svc.slug}`}
+              className="bg-white rounded-xl p-3 border border-teal-100 shadow-xs flex items-center gap-2.5 active:bg-teal-50 transition-colors"
+            >
+              <div className="w-8 h-8 rounded-lg bg-teal-800 text-white flex items-center justify-center flex-shrink-0">
+                {getServiceIcon(svc.iconName)}
+              </div>
+              <span className="text-xs font-bold text-teal-950 line-clamp-1">
+                {svc.title}
+              </span>
+            </Link>
+          ))}
+        </div>
+
+        {/* Desktop / Tablet Cards Grid (4 columns desktop, 2 columns tablet) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {servicesData.map((service) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              onQuickBook={onOpenBooking}
+            />
+          ))}
+        </div>
+
+        {/* Bottom Bar: Explore all services CTA */}
+        <div className="mt-12 text-center flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            to="/services"
+            className="btn-teal px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2"
+          >
+            <span>Explore All 8 Services</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+
+          <button
+            onClick={() => onOpenBooking()}
+            className="btn-gold px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2"
+          >
+            <span>Book Custom Service</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+  );
+};

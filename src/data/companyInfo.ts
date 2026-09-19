@@ -1,0 +1,25 @@
+export const companyInfo = {
+  name: "Hari Krishna Deep Cleaning Services",
+  shortName: "Hari Krishna Cleaning",
+  tagline: "A Cleaner Space • A Happier You",
+  positioning: "Professional Cleaning Services in Hyderabad",
+  address: "1-16, 2, Kavuri Hills Rd, Sri Rama Colony, Kavuri Hills, Gafoornagar, Hyderabad, Telangana – 500081",
+  shortAddress: "Kavuri Hills, Madhapur, Gafoornagar, Hyderabad – 500081",
+  serviceLocation: "Kavuri Hills, Madhapur, Gafoornagar, Hyderabad – 500081",
+  phone: "+91 95738 97750",
+  phoneClean: "+919573897750",
+  whatsapp: "+91 95738 97750",
+  whatsappClean: "919573897750",
+  whatsappMessage: "Hello Hari Krishna Deep Cleaning Services, I would like to enquire about your cleaning services.",
+  whatsappUrl: "https://wa.me/919573897750?text=Hello%20Hari%20Krishna%20Deep%20Cleaning%20Services%2C%20I%20would%20like%20to%20enquire%20about%20your%20cleaning%20services.",
+  email: "harikrishnadeepcleaningservice@gmail.com",
+  workingHours: "Monday - Sunday: 7:00 AM - 9:00 PM",
+  social: {
+    facebook: "https://facebook.com",
+    instagram: "https://instagram.com",
+    whatsapp: "https://wa.me/919573897750",
+    youtube: "https://youtube.com",
+  },
+  mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3806.323635787163!2d78.3908!3d17.4399!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb9158f201b205%3A0x11e403d6d06144e!2sKavuri%20Hills%2C%20Madhapur%2C%20Hyderabad%2C%20Telangana%20500081!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+  mapsDirectionsUrl: "https://maps.google.com/?q=1-16,+2,+Kavuri+Hills+Rd,+Sri+Rama+Colony,+Kavuri+Hills,+Gafoornagar,+Hyderabad,+Telangana+500081"
+};

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3E7BE" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#996E1D" />
+    </linearGradient>
+    <linearGradient id="teal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#147271" />
+      <stop offset="100%" stop-color="#073332" />
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22C55E" />
+      <stop offset="100%" stop-color="#15803D" />
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="56" fill="#0D5C5B" stroke="url(#gold)" stroke-width="4" />
+  <circle cx="60" cy="60" r="50" fill="#FFFFFF" />
+  <!-- Monogram -->
+  <g transform="translate(32, 28) scale(0.95)">
+    <path d="M 8 10 L 15 10 L 15 48 L 8 48 Z" fill="url(#teal)" />
+    <path d="M 26 10 L 33 10 L 33 48 L 26 48 Z" fill="url(#teal)" />
+    <path d="M 15 26 L 26 26 L 26 32 L 15 32 Z" fill="url(#gold)" />
+    <path d="M 37 10 L 44 10 L 44 48 L 37 48 Z" fill="url(#gold)" />
+    <path d="M 44 28 L 58 10 L 66 10 L 48 32 L 67 48 L 58 48 L 44 36 Z" fill="url(#gold)" />
+  </g>
+  <path d="M 42 90 C 48 98, 60 100, 60 100 C 60 100, 72 98, 78 90 C 70 93, 60 94, 60 94 C 60 94, 50 93, 42 90 Z" fill="url(#green)" />
+</svg>

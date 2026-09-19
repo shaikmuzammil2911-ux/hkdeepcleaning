@@ -1,0 +1,6 @@
+# Robots.txt for Hari Krishna Deep Cleaning Services
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://harikrishnadeepcleaning.com/sitemap.xml
