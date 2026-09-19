@@ -117,3 +117,156 @@ body {
   background-size: 200% 100%;
   animation: shimmer 2.5s linear infinite;
 }
+
+/* ===== SCROLL REVEAL ANIMATIONS ===== */
+
+/* Elements start hidden and reveal on scroll via IntersectionObserver */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-reveal-scale {
+  opacity: 0;
+  transform: scale(0.88);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal-scale.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delays for child elements */
+.stagger-1 { transition-delay: 0.05s !important; }
+.stagger-2 { transition-delay: 0.12s !important; }
+.stagger-3 { transition-delay: 0.20s !important; }
+.stagger-4 { transition-delay: 0.28s !important; }
+.stagger-5 { transition-delay: 0.36s !important; }
+.stagger-6 { transition-delay: 0.44s !important; }
+
+/* ===== POPUP / MODAL ANIMATIONS ===== */
+@keyframes popupIn {
+  0%   { opacity: 0; transform: scale(0.88) translateY(30px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes popupOut {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.92) translateY(20px); }
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.popup-enter {
+  animation: popupIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.backdrop-enter {
+  animation: backdropIn 0.25s ease both;
+}
+
+/* ===== HERO TEXT ENTRANCE ===== */
+@keyframes heroSlideUp {
+  0%   { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.hero-animate-1 { animation: heroSlideUp 0.7s 0.1s cubic-bezier(0.16,1,0.3,1) both; }
+.hero-animate-2 { animation: heroSlideUp 0.7s 0.25s cubic-bezier(0.16,1,0.3,1) both; }
+.hero-animate-3 { animation: heroSlideUp 0.7s 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+.hero-animate-4 { animation: heroSlideUp 0.7s 0.55s cubic-bezier(0.16,1,0.3,1) both; }
+
+/* ===== PULSE RING (WhatsApp / CTA) ===== */
+@keyframes pulseRing {
+  0%   { transform: scale(1); opacity: 0.7; }
+  60%  { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.pulse-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  animation: pulseRing 2s ease-out infinite;
+}
+
+/* ===== COUNTER ANIMATION ===== */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.counter-animate {
+  animation: countUp 0.5s ease both;
+}
+
+/* ===== CARD HOVER LIFT ===== */
+.card-lift {
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -10px rgba(13, 92, 91, 0.2);
+}
+
+/* ===== GOLD SHINE SWEEP ===== */
+@keyframes goldSweep {
+  0%   { left: -100%; }
+  100% { left: 200%; }
+}
+
+.gold-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.gold-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  animation: goldSweep 2.5s ease-in-out infinite;
+}

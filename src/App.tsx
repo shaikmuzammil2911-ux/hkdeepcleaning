@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { TopBar } from './components/TopBar';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -8,6 +8,7 @@ import { MobileBottomBar } from './components/MobileBottomBar';
 import { BookingModal } from './components/BookingModal';
 import { ScrollToTop } from './components/ScrollToTop';
 import { LoadingScreen } from './components/LoadingScreen';
+import { useScrollReveal } from './hooks/useScrollReveal';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -24,6 +25,10 @@ import { NotFoundPage } from './pages/NotFoundPage';
 export const App: React.FC = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedServiceSlug, setSelectedServiceSlug] = useState<string | undefined>();
+  const location = useLocation();
+
+  // Re-run scroll reveal on every route change
+  useScrollReveal();
 
   const handleOpenBooking = (serviceSlug?: string) => {
     setSelectedServiceSlug(serviceSlug);
