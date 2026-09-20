@@ -173,8 +173,8 @@ export async function getPublishedTestimonials(): Promise<TestimonialItem[]> {
     const { data, error } = await supabase
       .from('testimonials')
       .select('*')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false });
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
 
     if (!error && data && data.length > 0) {
       return data as TestimonialItem[];
@@ -195,6 +195,8 @@ export async function getPublishedTestimonials(): Promise<TestimonialItem[]> {
     updated_at: new Date().toISOString(),
   }));
 }
+
+export const getActiveTestimonials = getPublishedTestimonials;
 
 // ============================================================
 // FAQS DATA ACCESS

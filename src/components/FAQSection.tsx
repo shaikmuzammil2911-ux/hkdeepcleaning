@@ -9,13 +9,22 @@ interface FAQSectionProps {
   onOpenBooking?: () => void;
   limit?: number;
   showContactCTA?: boolean;
+  items?: any[];
 }
 
 export const FAQSection: React.FC<FAQSectionProps> = ({
   limit,
   showContactCTA = true,
+  items,
 }) => {
-  const [openIds, setOpenIds] = useState<string[]>(['faq-1', 'faq-2']);
+  const rawFaqs = items && items.length > 0 ? items.map((f: any) => ({
+    id: f.id,
+    question: f.question,
+    answer: f.answer,
+    category: f.category || 'General',
+  })) : faqData;
+
+  const [openIds, setOpenIds] = useState<string[]>([rawFaqs[0]?.id || 'faq-1']);
 
   const toggleFAQ = (id: string) => {
     setOpenIds((prev) =>
@@ -23,7 +32,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
     );
   };
 
-  const displayedFaqs = limit ? faqData.slice(0, limit) : faqData;
+  const displayedFaqs = limit ? rawFaqs.slice(0, limit) : rawFaqs;
 
   return (
     <section id="faq-section" className="py-16 sm:py-20 bg-white relative">

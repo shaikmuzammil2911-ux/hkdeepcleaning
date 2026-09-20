@@ -5,16 +5,17 @@ import { FAQSection } from '@/src/components/FAQSection';
 import { CTASection } from '@/src/components/CTASection';
 import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Frequently Asked Questions | Hari Krishna Deep Cleaning Hyderabad',
-  description: 'Find answers to common questions about home deep cleaning, pricing, duration, chemicals used, and booking process in Hyderabad.',
-};
+import { getActiveFAQs } from '@/lib/db';
 
-export default function FAQPage() {
+export const revalidate = 0; // Immediate live dynamic updates
+
+export default async function FAQPage() {
+  const faqs = await getActiveFAQs();
+
   return (
     <PublicLayoutWrapper>
       <Breadcrumbs items={[{ name: 'FAQ' }]} />
-      <FAQSection />
+      <FAQSection items={faqs} />
       <CTASection />
     </PublicLayoutWrapper>
   );

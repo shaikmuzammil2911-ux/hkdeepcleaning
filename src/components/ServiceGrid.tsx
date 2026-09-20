@@ -9,9 +9,12 @@ import { ServiceCard } from './ServiceCard';
 interface ServiceGridProps {
   onOpenBooking?: (serviceSlug?: string) => void;
   showAll?: boolean;
+  services?: any[];
 }
 
-export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => {} }) => {
+export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => {}, services }) => {
+  const displayServices = services && services.length > 0 ? services : servicesData;
+
   const getServiceIcon = (name: string) => {
     switch (name) {
       case 'Home': return <Home className="w-5 h-5" />;
@@ -37,7 +40,7 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => 
             <span>OUR SERVICES</span>
           </div>
           <h2 className="font-display font-extrabold text-2xl sm:text-4xl lg:text-4xl text-teal-950 tracking-tight mb-3">
-            8+ Professional Cleaning Services
+            Professional Cleaning Services in Hyderabad
           </h2>
           <p className="text-sm sm:text-base text-slate-600">
             We offer a wide range of deep-cleaning solutions for homes, offices, villas and commercial spaces in Hyderabad.
@@ -46,27 +49,31 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => 
 
         {/* Mobile Quick Service Buttons */}
         <div className="grid grid-cols-2 gap-2.5 mb-8 md:hidden">
-          {servicesData.map((svc) => (
-            <Link
-              key={`mob-${svc.id}`}
-              href={`/services/${svc.slug}`}
-              className="bg-white rounded-xl p-3 border border-teal-100 shadow-xs flex items-center gap-2.5 active:bg-teal-50 transition-colors"
-            >
-              <div className="w-8 h-8 rounded-lg bg-teal-800 text-white flex items-center justify-center flex-shrink-0">
-                {getServiceIcon(svc.iconName)}
-              </div>
-              <span className="text-xs font-bold text-teal-950 line-clamp-1">
-                {svc.title}
-              </span>
-            </Link>
-          ))}
+          {displayServices.map((svc: any) => {
+            const title = svc.name || svc.title;
+            const iconName = svc.iconName || 'Sparkles';
+            return (
+              <Link
+                key={`mob-${svc.id || svc.slug}`}
+                href={`/services/${svc.slug}`}
+                className="bg-white rounded-xl p-3 border border-teal-100 shadow-xs flex items-center gap-2.5 active:bg-teal-50 transition-colors"
+              >
+                <div className="w-8 h-8 rounded-lg bg-teal-800 text-white flex items-center justify-center flex-shrink-0">
+                  {getServiceIcon(iconName)}
+                </div>
+                <span className="text-xs font-bold text-teal-950 line-clamp-1">
+                  {title}
+                </span>
+              </Link>
+            );
+          })}
         </div>
 
         {/* Desktop / Tablet Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {servicesData.map((service) => (
+          {displayServices.map((service: any) => (
             <ServiceCard
-              key={service.id}
+              key={service.id || service.slug}
               service={service}
               onQuickBook={onOpenBooking}
             />

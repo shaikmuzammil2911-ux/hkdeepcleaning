@@ -9,36 +9,48 @@ import { BeforeAfterSlider } from './BeforeAfterSlider';
 interface BeforeAfterGalleryProps {
   limit?: number;
   showFilters?: boolean;
+  items?: any[];
 }
 
 export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
   limit = 4,
   showFilters = false,
+  items,
 }) => {
   const [activeCategory, setActiveCategory] = useState<string>('All');
-  const [lightboxItem, setLightboxItem] = useState<GalleryItem | null>(null);
+  const [lightboxItem, setLightboxItem] = useState<any | null>(null);
+
+  const rawItems = items && items.length > 0 ? items.map((g: any) => ({
+    id: g.id,
+    category: g.category || 'Home',
+    title: g.title,
+    location: g.location || 'Hyderabad',
+    beforeImage: g.before_image_url || g.beforeImage,
+    afterImage: g.after_image_url || g.afterImage,
+    description: g.description,
+  })) : galleryData;
 
   const categories = ['All', 'Kitchen', 'Bathroom', 'Floor', 'Home'];
 
-  const filteredItems = galleryData.filter((item) => {
+  const filteredItems = rawItems.filter((item: any) => {
     if (activeCategory === 'All') return true;
-    return item.category === activeCategory;
+    return item.category.toLowerCase() === activeCategory.toLowerCase();
   });
 
   const displayItems = limit ? filteredItems.slice(0, limit) : filteredItems;
 
   const handleNext = () => {
     if (!lightboxItem) return;
-    const currentIndex = galleryData.findIndex((g) => g.id === lightboxItem.id);
-    const nextIndex = (currentIndex + 1) % galleryData.length;
-    setLightboxItem(galleryData[nextIndex]);
+    const currentIndex = rawItems.findIndex((g: any) => g.id === lightboxItem.id);
+    const nextIndex = (currentIndex + 1) % rawItems.length;
+    setLightboxItem(rawItems[nextIndex]);
   };
 
   const handlePrev = () => {
     if (!lightboxItem) return;
-    const currentIndex = galleryData.findIndex((g) => g.id === lightboxItem.id);
-    const prevIndex = (currentIndex - 1 + galleryData.length) % galleryData.length;
-    setLightboxItem(galleryData[prevIndex]);
+    const currentIndex = rawItems.findIndex((g: any) => g.id === lightboxItem.id);
+    const prevIndex = (currentIndex - 1 + rawItems.length) % rawItems.length;
+    setLightboxItem(rawItems[prevIndex]);
   };
 
   return (

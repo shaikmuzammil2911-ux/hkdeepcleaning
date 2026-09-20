@@ -73,15 +73,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const menuItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Posts', path: '/admin/posts', icon: FileText },
-    { name: 'Services', path: '/admin/services', icon: Sparkles },
-    { name: 'Gallery', path: '/admin/gallery', icon: ImageIcon },
+    { name: 'Services / Products', path: '/admin/services', icon: Sparkles },
+    { name: 'Posts & Tips', path: '/admin/posts', icon: FileText },
+    { name: 'Before/After Gallery', path: '/admin/gallery', icon: ImageIcon },
     { name: 'Testimonials', path: '/admin/testimonials', icon: MessageSquareQuote },
     { name: 'FAQ', path: '/admin/faq', icon: HelpCircle },
-    { name: 'Bookings', path: '/admin/bookings', icon: CalendarCheck },
+    { name: 'Bookings & Leads', path: '/admin/bookings', icon: CalendarCheck },
     { name: 'Media Library', path: '/admin/media', icon: Folder },
-    { name: 'Settings', path: '/admin/settings', icon: Settings },
-    { name: 'Integrations', path: '/admin/integrations', icon: Cpu },
+    { name: 'Site Settings', path: '/admin/settings', icon: Settings },
   ];
 
   const isActive = (path: string) => {

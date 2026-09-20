@@ -6,16 +6,17 @@ import { CTASection } from '@/src/components/CTASection';
 import { FAQSection } from '@/src/components/FAQSection';
 import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Our Cleaning Services in Hyderabad | Hari Krishna Deep Cleaning',
-  description: 'Explore our full range of 8+ professional cleaning services in Hyderabad: Home deep cleaning, Villa, Office, Kitchen, Bathroom, Floor, and Move-in cleaning.',
-};
+import { getActiveServices } from '@/lib/db';
 
-export default function ServicesPage() {
+export const revalidate = 0; // Immediate live dynamic updates
+
+export default async function ServicesPage() {
+  const services = await getActiveServices();
+
   return (
     <PublicLayoutWrapper>
       <Breadcrumbs items={[{ name: 'Cleaning Services' }]} />
-      <ServiceGrid showAll={true} />
+      <ServiceGrid services={services} showAll={true} />
       <FAQSection />
       <CTASection />
     </PublicLayoutWrapper>

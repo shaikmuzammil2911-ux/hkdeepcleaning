@@ -11,6 +11,13 @@ interface ServiceCardProps {
 }
 
 export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
+  const title = (service as any).name || (service as any).title || 'Cleaning Service';
+  const slug = service.slug;
+  const image = (service as any).hero_image_url || (service as any).image || '/images/hero-cleaner.jpg';
+  const shortDescription = (service as any).short_description || (service as any).shortDescription || '';
+  const tag = (service as any).tag || 'Popular Service';
+  const iconName = (service as any).iconName || 'Sparkles';
+
   const renderIcon = (name: string) => {
     switch (name) {
       case 'Home': return <Home className="w-5 h-5 text-white" />;
@@ -30,8 +37,8 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
       {/* Card Image */}
       <div className="relative h-48 sm:h-52 w-full overflow-hidden bg-slate-100">
         <img
-          src={service.image}
-          alt={`${service.title} in Hyderabad`}
+          src={image}
+          alt={`${title} in Hyderabad`}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
         />
@@ -39,7 +46,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         
         {/* Service Tag Badge */}
         <span className="absolute top-3 right-3 bg-teal-900/80 backdrop-blur-md text-gold-300 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border border-gold-400/30">
-          {service.tag}
+          {tag}
         </span>
       </div>
 
@@ -47,34 +54,34 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
       <div className="relative px-5 pt-0 pb-6 flex-1 flex flex-col justify-between">
         <div className="-mt-6 mb-3 flex items-center justify-between">
           <div className="w-12 h-12 rounded-xl bg-teal-800 border-2 border-white shadow-md flex items-center justify-center group-hover:bg-gold-500 transition-colors duration-300">
-            {renderIcon(service.iconName)}
+            {renderIcon(iconName)}
           </div>
         </div>
 
         {/* Title & Description */}
         <div>
           <h3 className="text-lg font-display font-bold text-teal-950 group-hover:text-teal-700 transition-colors mb-2">
-            <Link href={`/services/${service.slug}`}>
-              {service.title}
+            <Link href={`/services/${slug}`}>
+              {title}
             </Link>
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed line-clamp-3 mb-4">
-            {service.shortDescription}
+            {shortDescription}
           </p>
         </div>
 
         {/* Card Footer: View Details & Arrow */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between mt-auto">
           <Link
-            href={`/services/${service.slug}`}
+            href={`/services/${slug}`}
             className="text-xs font-bold text-teal-800 group-hover:text-gold-600 transition-colors inline-flex items-center gap-1.5"
           >
             <span>View Service</span>
           </Link>
 
           <Link
-            href={`/services/${service.slug}`}
-            aria-label={`View details for ${service.title}`}
+            href={`/services/${slug}`}
+            aria-label={`View details for ${title}`}
             className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center group-hover:bg-teal-700 group-hover:translate-x-1 transition-all duration-200"
           >
             <ArrowRight className="w-4 h-4" />

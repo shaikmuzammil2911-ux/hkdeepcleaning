@@ -4,24 +4,41 @@ import React, { useState, useEffect } from 'react';
 import { Star, ChevronLeft, ChevronRight, MapPin, CheckCircle } from 'lucide-react';
 import { testimonialsData } from '../data/testimonialsData';
 
-export const Testimonials: React.FC = () => {
+interface TestimonialsProps {
+  items?: any[];
+}
+
+export const Testimonials: React.FC<TestimonialsProps> = ({ items }) => {
+  const list = items && items.length > 0 ? items.map((t: any) => ({
+    id: t.id,
+    name: t.customer_name || t.name,
+    location: t.customer_role || t.location || 'Hyderabad',
+    service: 'Deep Cleaning',
+    rating: t.rating || 5,
+    review: t.content || t.review,
+    avatarUrl: t.avatar_url || t.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+    verified: true,
+  })) : testimonialsData;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || list.length === 0) return;
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % testimonialsData.length);
+      setCurrentIndex((prev) => (prev + 1) % list.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [isPaused]);
+  }, [isPaused, list.length]);
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % testimonialsData.length);
+    if (list.length === 0) return;
+    setCurrentIndex((prev) => (prev + 1) % list.length);
   };
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + testimonialsData.length) % testimonialsData.length);
+    if (list.length === 0) return;
+    setCurrentIndex((prev) => (prev - 1 + list.length) % list.length);
   };
 
   return (
@@ -47,14 +64,14 @@ export const Testimonials: React.FC = () => {
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          {testimonialsData.slice(0, 3).map((item) => (
+          {list.slice(0, 3).map((item: any) => (
             <div
               key={item.id}
               className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between relative group"
             >
               <div>
                 <div className="flex items-center gap-1 mb-4 text-gold-500">
-                  {[...Array(item.rating)].map((_, i) => (
+                  {[...Array(item.rating || 5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-gold-500" />
                   ))}
                 </div>
@@ -101,7 +118,7 @@ export const Testimonials: React.FC = () => {
             <ChevronLeft className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-1.5">
-            {testimonialsData.map((_, i) => (
+            {list.map((_: any, i: number) => (
               <button
                 key={i}
                 aria-label={`Go to slide ${i + 1}`}

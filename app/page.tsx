@@ -9,12 +9,18 @@ import { FAQSection } from '@/src/components/FAQSection';
 import { ServiceAreas } from '@/src/components/ServiceAreas';
 import { CTASection } from '@/src/components/CTASection';
 import { LatestPostsSection } from '@/components/LatestPostsSection';
-import { getPublishedPosts } from '@/lib/db';
+import { getPublishedPosts, getActiveServices, getActiveGallery, getActiveTestimonials, getActiveFAQs } from '@/lib/db';
 
-export const revalidate = 60; // Revalidate every 60s or on-demand
+export const revalidate = 0; // Immediate live dynamic updates
 
 export default async function HomePage() {
-  const latestPosts = await getPublishedPosts(3);
+  const [latestPosts, services, gallery, testimonials, faqs] = await Promise.all([
+    getPublishedPosts(3),
+    getActiveServices(),
+    getActiveGallery(),
+    getActiveTestimonials(),
+    getActiveFAQs(),
+  ]);
 
   return (
     <PublicLayoutWrapper>
@@ -22,22 +28,22 @@ export default async function HomePage() {
       <Hero />
 
       {/* 2. Services Grid */}
-      <ServiceGrid />
+      <ServiceGrid services={services} />
 
       {/* 3. About Us Section */}
       <AboutSection />
 
       {/* 4. Interactive Before & After Gallery */}
-      <BeforeAfterGallery limit={4} />
+      <BeforeAfterGallery limit={4} items={gallery} />
 
       {/* 5. Cleaning Tips & Posts Section */}
       <LatestPostsSection posts={latestPosts} />
 
       {/* 6. Real Customer Testimonials */}
-      <Testimonials />
+      <Testimonials items={testimonials} />
 
       {/* 7. Frequently Asked Questions */}
-      <FAQSection />
+      <FAQSection items={faqs} />
 
       {/* 8. Service Areas across Hyderabad */}
       <ServiceAreas />

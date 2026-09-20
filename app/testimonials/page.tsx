@@ -5,16 +5,17 @@ import { Testimonials } from '@/src/components/Testimonials';
 import { CTASection } from '@/src/components/CTASection';
 import { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Customer Testimonials & Reviews | Hari Krishna Deep Cleaning Hyderabad',
-  description: 'Read real customer reviews and testimonials from homeowners, villa owners, and businesses across Hyderabad.',
-};
+import { getActiveTestimonials } from '@/lib/db';
 
-export default function TestimonialsPage() {
+export const revalidate = 0; // Immediate live dynamic updates
+
+export default async function TestimonialsPage() {
+  const testimonials = await getActiveTestimonials();
+
   return (
     <PublicLayoutWrapper>
       <Breadcrumbs items={[{ name: 'Testimonials' }]} />
-      <Testimonials />
+      <Testimonials items={testimonials} />
       <CTASection />
     </PublicLayoutWrapper>
   );
