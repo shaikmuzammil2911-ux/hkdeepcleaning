@@ -39,6 +39,9 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         <img
           src={image}
           alt={`${title} in Hyderabad`}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/images/hero-cleaner.jpg';
+          }}
           className="w-full h-full object-cover object-center group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
         />

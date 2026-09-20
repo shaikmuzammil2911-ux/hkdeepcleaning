@@ -10,7 +10,7 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onOpenBooking = () => {} }) => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/40 via-white to-white pt-6 pb-16 lg:pt-12 lg:pb-24">
+    <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/40 via-white to-white pt-2 sm:pt-4 pb-12 lg:pt-5 lg:pb-16">
       {/* Subtle Background Glows */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-gold-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />

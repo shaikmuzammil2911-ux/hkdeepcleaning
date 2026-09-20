@@ -18,33 +18,33 @@ export const Logo: React.FC<LogoProps> = ({
 
   const imgSize =
     size === 'sm'
-      ? 'w-12 h-12 sm:w-14 sm:h-14'
+      ? 'w-10 h-10 sm:w-12 sm:h-12'
       : size === 'lg'
-      ? 'w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28'
-      : 'w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20';
+      ? 'w-16 h-16 sm:w-20 sm:h-20'
+      : 'w-14 h-14 sm:w-16 sm:h-16';
 
   return (
-    <Link href="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
+    <Link href="/" className={`inline-flex items-center gap-3 group select-none whitespace-nowrap flex-shrink-0 ${className}`}>
       {/* Actual HK Circular Logo PNG */}
       <img
         src="/images/hk-logo.png"
         alt="Hari Krishna Cleaning Services Logo"
-        className={`${imgSize} object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-md`}
+        className={`${imgSize} object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-md flex-shrink-0`}
       />
 
       {/* Brand Typography */}
-      <div className="flex flex-col justify-center text-left leading-tight">
+      <div className="flex flex-col justify-center text-left leading-tight whitespace-nowrap">
         <div className="flex items-baseline">
           <span
-            className={`font-display font-extrabold tracking-tight ${
-              size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
-            } ${isDark ? 'text-white' : 'text-teal-900'}`}
+            className={`font-display font-black tracking-tight ${
+              size === 'sm' ? 'text-lg' : size === 'lg' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
+            } ${isDark ? 'text-white' : 'text-teal-950'}`}
           >
             Hari
           </span>
           <span
-            className={`font-display font-extrabold tracking-tight ml-1 ${
-              size === 'sm' ? 'text-xl' : size === 'lg' ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
+            className={`font-display font-black tracking-tight ml-1 ${
+              size === 'sm' ? 'text-lg' : size === 'lg' ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'
             } text-gold-500`}
           >
             Krishna

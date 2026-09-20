@@ -3,7 +3,21 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, Menu, X, Calendar, Phone, Sparkles, Home, Building2, HardHat, Bath, Utensils, Castle, Truck } from 'lucide-react';
+import {
+  ChevronDown,
+  Menu,
+  X,
+  Calendar,
+  Phone,
+  Sparkles,
+  Home,
+  Building2,
+  HardHat,
+  Bath,
+  Utensils,
+  Castle,
+  Truck,
+} from 'lucide-react';
 import { Logo } from './Logo';
 import { servicesData } from '../data/servicesData';
 import { companyInfo } from '../data/companyInfo';
@@ -20,7 +34,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 15);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -66,18 +80,21 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-all duration-200 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-md py-3'
-          : 'bg-white/90 backdrop-blur-sm py-4 border-b border-slate-100'
+          ? 'bg-white/98 backdrop-blur-md shadow-sm border-b border-slate-200/80'
+          : 'bg-white/95 backdrop-blur-md border-b border-slate-100'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-        {/* Brand Logo */}
-        <Logo size="md" />
+      <div className="w-full max-w-[1550px] mx-auto px-6 sm:px-8 lg:px-10 h-[105px] min-h-[105px] flex items-center justify-between">
+        
+        {/* 1. BRAND AREA */}
+        <div className="flex-shrink-0 flex items-center pr-4">
+          <Logo size="md" />
+        </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center gap-6 2xl:gap-8">
+        {/* 2. MAIN NAVIGATION ROW */}
+        <nav className="hidden xl:flex items-center gap-[28px] 2xl:gap-[32px] justify-center">
           {navLinks.map((link) => {
             if (link.hasDropdown) {
               return (
@@ -89,10 +106,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
                 >
                   <Link
                     href={link.path}
-                    className={`inline-flex items-center gap-1 text-sm font-semibold transition-colors duration-200 ${
+                    className={`inline-flex items-center gap-1.5 text-[14px] font-semibold transition-colors duration-150 whitespace-nowrap ${
                       isActive('/services')
                         ? 'text-teal-800 font-bold border-b-2 border-gold-500 pb-0.5'
-                        : 'text-slate-700 hover:text-teal-700'
+                        : 'text-slate-700 hover:text-teal-800'
                     }`}
                   >
                     <span>{link.name}</span>
@@ -101,20 +118,20 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
 
                   {/* Dropdown Menu */}
                   <div
-                    className={`absolute left-0 top-full pt-2 w-80 transition-all duration-200 origin-top-left ${
+                    className={`absolute left-0 top-full pt-2 w-80 transition-all duration-200 origin-top-left z-50 ${
                       isServicesDropdownOpen
                         ? 'opacity-100 scale-100 pointer-events-auto visible'
                         : 'opacity-0 scale-95 pointer-events-none invisible'
                     }`}
                   >
-                    <div className="bg-white rounded-xl shadow-2xl border border-slate-100 p-2 overflow-hidden ring-1 ring-black/5">
-                      <div className="px-3 py-2 border-b border-slate-100 bg-teal-50/50 rounded-lg mb-1 flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-teal-900">
+                    <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 p-2 overflow-hidden ring-1 ring-black/5">
+                      <div className="px-3.5 py-2.5 border-b border-slate-100 bg-teal-50/60 rounded-xl mb-1 flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-teal-950">
                           8+ Cleaning Services
                         </span>
                         <Link
                           href="/services"
-                          className="text-[11px] font-semibold text-gold-600 hover:underline"
+                          className="text-[11px] font-bold text-gold-600 hover:underline"
                         >
                           View All →
                         </Link>
@@ -125,13 +142,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
                           <Link
                             key={service.id}
                             href={`/services/${service.slug}`}
-                            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-teal-50 text-slate-700 hover:text-teal-900 transition-colors group/item"
+                            className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-teal-50/80 text-slate-700 hover:text-teal-900 transition-colors group/item"
                           >
-                            <div className="w-7 h-7 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center group-hover/item:bg-gold-500 group-hover/item:text-white transition-colors">
+                            <div className="w-7 h-7 rounded-lg bg-teal-100/80 text-teal-800 flex items-center justify-center group-hover/item:bg-gold-500 group-hover/item:text-white transition-colors flex-shrink-0">
                               {getServiceIcon(service.slug)}
                             </div>
-                            <div className="flex flex-col">
-                              <span className="text-xs font-semibold group-hover/item:text-teal-800">
+                            <div className="flex flex-col min-w-0">
+                              <span className="text-xs font-semibold group-hover/item:text-teal-800 truncate">
                                 {service.title}
                               </span>
                               <span className="text-[10px] text-slate-400 truncate max-w-[200px]">
@@ -151,134 +168,96 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
               <Link
                 key={link.name}
                 href={link.path}
-                className={`text-sm font-semibold transition-colors duration-200 relative ${
+                className={`text-[14px] font-semibold transition-colors duration-150 whitespace-nowrap ${
                   isActive(link.path)
-                    ? 'text-teal-800 font-bold'
-                    : 'text-slate-700 hover:text-teal-700'
+                    ? 'text-teal-800 font-bold border-b-2 border-gold-500 pb-0.5'
+                    : 'text-slate-700 hover:text-teal-800'
                 }`}
               >
                 {link.name}
-                {isActive(link.path) && (
-                  <span className="absolute -bottom-1.5 left-0 w-full h-0.5 bg-gold-500 rounded-full" />
-                )}
               </Link>
             );
           })}
         </nav>
 
-        {/* Right Action: Book Now & Call CTA */}
-        <div className="hidden lg:flex items-center gap-3">
+        {/* 3. RIGHT ACTION AREA */}
+        <div className="hidden lg:flex items-center gap-4 flex-shrink-0 pl-4">
           <a
             href={`tel:${companyInfo.phoneClean}`}
-            className="flex items-center gap-1.5 text-xs font-bold text-teal-800 bg-teal-50 hover:bg-teal-100 px-3 py-2 rounded-full border border-teal-200 transition-all duration-200"
+            className="min-w-[175px] h-11 px-4 rounded-full bg-teal-50/90 hover:bg-teal-100 text-teal-950 border border-teal-200/80 flex items-center justify-center gap-2 text-xs font-bold transition-all shadow-xs"
           >
-            <Phone className="w-3.5 h-3.5 text-teal-700" />
-            <span>Call: +91 95738 97750</span>
+            <Phone className="w-3.5 h-3.5 text-teal-700 flex-shrink-0" />
+            <span className="whitespace-nowrap">Call: {companyInfo.phone}</span>
           </a>
 
           <button
             onClick={() => onOpenBooking()}
-            id="nav-book-now-btn"
-            className="btn-gold flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-md hover:shadow-lg"
+            className="w-[150px] h-11 rounded-2xl btn-gold text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all"
           >
-            <Calendar className="w-4 h-4" />
-            <span>Book Now</span>
+            <Calendar className="w-3.5 h-3.5" />
+            <span>BOOK NOW</span>
           </button>
         </div>
 
         {/* Mobile Hamburger Button */}
         <div className="flex items-center gap-2 xl:hidden">
-          <button
-            onClick={() => onOpenBooking()}
-            className="btn-gold px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm sm:hidden"
+          <a
+            href={`tel:${companyInfo.phoneClean}`}
+            className="p-2 rounded-xl bg-teal-50 text-teal-800 border border-teal-200/80 flex items-center justify-center"
+            title="Call Us"
           >
-            <Calendar className="w-3 h-3" />
-            <span>Book</span>
-          </button>
+            <Phone className="w-4 h-4" />
+          </a>
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            id="mobile-menu-toggle-btn"
-            aria-label="Toggle mobile menu"
-            className="p-2 rounded-lg text-teal-900 hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-700"
+            className="p-2.5 rounded-xl bg-slate-100 text-slate-800 hover:bg-slate-200 transition-colors"
+            aria-label="Toggle Navigation Menu"
           >
             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Menu Drawer */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-[70px] z-50 bg-slate-900/60 backdrop-blur-sm xl:hidden">
-          <div className="bg-white w-full max-h-[85vh] overflow-y-auto shadow-2xl border-b border-slate-200 px-6 py-6 animate-in slide-in-from-top-4 duration-300">
-            <div className="flex flex-col space-y-3">
-              {navLinks.map((link) => (
-                <div key={link.name} className="border-b border-slate-100 pb-2">
-                  <Link
-                    href={link.path}
-                    className={`block text-base font-semibold py-1 ${
-                      isActive(link.path)
-                        ? 'text-teal-800 font-bold pl-2 border-l-4 border-gold-500'
-                        : 'text-slate-800 hover:text-teal-700'
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
+        <div className="xl:hidden bg-white border-b border-slate-200 shadow-xl px-4 pt-3 pb-6 space-y-3">
+          <div className="space-y-1">
+            {navLinks.map((link) => (
+              <Link
+                key={`mob-${link.name}`}
+                href={link.path}
+                className={`block px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                  isActive(link.path)
+                    ? 'bg-teal-50 text-teal-900 font-bold border-l-4 border-gold-500'
+                    : 'text-slate-700 hover:bg-slate-50'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
 
-                  {link.hasDropdown && (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-2 pl-3 py-1 bg-slate-50 rounded-lg">
-                      {servicesData.map((svc) => (
-                        <Link
-                          key={svc.id}
-                          href={`/services/${svc.slug}`}
-                          className="text-xs text-slate-600 hover:text-teal-800 py-1 flex items-center gap-2"
-                        >
-                          <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
-                          <span>{svc.title}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+          <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+            <a
+              href={`tel:${companyInfo.phoneClean}`}
+              className="w-full py-3 rounded-xl bg-teal-50 text-teal-900 border border-teal-200 flex items-center justify-center gap-2 text-xs font-bold"
+            >
+              <Phone className="w-4 h-4 text-teal-700" />
+              <span>Call: {companyInfo.phone}</span>
+            </a>
 
-              {/* Mobile CTA Buttons */}
-              <div className="pt-4 flex flex-col gap-3">
-                <button
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    onOpenBooking();
-                  }}
-                  className="btn-gold w-full py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md text-sm uppercase tracking-wider"
-                >
-                  <Calendar className="w-4 h-4" />
-                  <span>Book Cleaning Service</span>
-                </button>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <a
-                    href={`tel:${companyInfo.phoneClean}`}
-                    className="btn-teal py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    <span>Call Now</span>
-                  </a>
-                  <a
-                    href={companyInfo.whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-gold-300" />
-                    <span>WhatsApp</span>
-                  </a>
-                </div>
-
-                <div className="text-center text-xs text-slate-500 pt-2">
-                  📍 {companyInfo.shortAddress}
-                </div>
-              </div>
-            </div>
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                onOpenBooking();
+              }}
+              className="w-full py-3 rounded-xl btn-gold text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 shadow-md"
+            >
+              <Calendar className="w-4 h-4" />
+              <span>BOOK NOW</span>
+            </button>
           </div>
         </div>
       )}
