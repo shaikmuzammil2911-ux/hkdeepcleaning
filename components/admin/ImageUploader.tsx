@@ -37,6 +37,67 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       ? 'aspect-[21/9] max-w-full'
       : 'aspect-[16/9] max-w-md';
 
+  const compressImage = async (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      // If SVG or small file (< 300KB), don't process
+      if (file.type.includes('svg') || file.size < 300 * 1024) {
+        return resolve(file);
+      }
+
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target?.result as string;
+      };
+
+      img.onload = () => {
+        const MAX_WIDTH = 1600;
+        const MAX_HEIGHT = 1600;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = Math.round((width * MAX_HEIGHT) / height);
+            height = MAX_HEIGHT;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return resolve(file);
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.webp'), {
+                type: 'image/webp',
+              });
+              resolve(newFile);
+            } else {
+              resolve(file);
+            }
+          },
+          'image/webp',
+          0.88
+        );
+      };
+
+      img.onerror = () => resolve(file);
+      reader.readAsDataURL(file);
+    });
+  };
+
   const validateAndUpload = async (file: File) => {
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -57,8 +118,9 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     // 3. Upload to Backend Server API
     setIsUploading(true);
     try {
+      const optimizedFile = await compressImage(file);
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', optimizedFile);
       formData.append('category', category);
 
       const res = await fetch('/api/upload', {
