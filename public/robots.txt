@@ -1,7 +1,8 @@
-# Robots.txt for Hari Krishna Deep Cleaning Services
+# Robots.txt for Hari Krishna Deep Cleaning Services Hyderabad
 User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin/
 
-Sitemap: https://harikrishnadeepcleaning.com/sitemap.xml
+Sitemap: https://harikrishnadeepcleaningservices.com/sitemap.xml
+Sitemap: https://hkdeepcleaning.vercel.app/sitemap.xml
