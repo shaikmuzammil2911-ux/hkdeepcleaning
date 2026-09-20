@@ -16,7 +16,7 @@ export interface PostItem {
   excerpt: string;
   content: string;
   cover_image_url: string;
-  cover_image_public_id?: string;
+  cover_image_public_id?: string | null;
   status: 'draft' | 'published';
   category: string;
   tags?: string[];
@@ -35,7 +35,7 @@ export interface ServiceItem {
   short_description: string;
   description: string;
   hero_image_url: string;
-  hero_image_public_id?: string;
+  hero_image_public_id?: string | null;
   content?: string;
   seo_title?: string;
   seo_description?: string;
@@ -50,9 +50,9 @@ export interface GalleryItem {
   title: string;
   category: string;
   before_image_url: string;
-  before_image_public_id?: string;
+  before_image_public_id?: string | null;
   after_image_url: string;
-  after_image_public_id?: string;
+  after_image_public_id?: string | null;
   description?: string;
   sort_order: number;
   is_active: boolean;

@@ -89,7 +89,7 @@ export default function AdminMediaPage() {
         throw new Error(data.error || 'Upload failed');
       }
 
-      showToast('Media uploaded to Cloudinary!');
+      showToast('Media uploaded successfully!');
       setUploadFile(null);
       fetchMedia();
     } catch (err: any) {
@@ -111,9 +111,9 @@ export default function AdminMediaPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
         <div>
-          <h1 className="text-2xl font-bold font-display text-white">Cloudinary Media Library</h1>
+          <h1 className="text-2xl font-bold font-display text-white">Media Library</h1>
           <p className="text-xs text-slate-400 mt-1">
-            View and manage all uploaded media assets stored in Cloudinary folder `hari-krishna-cleaning/`.
+            View and manage all uploaded website images and assets.
           </p>
         </div>
 

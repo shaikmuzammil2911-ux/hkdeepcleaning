@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { ServiceItem } from '@/lib/types';
+import { ImageUploader } from '@/components/admin/ImageUploader';
 import {
   Plus,
   Edit2,
@@ -11,11 +12,7 @@ import {
   RefreshCw,
   Loader2,
   Sparkles,
-  Upload,
-  Image as ImageIcon,
   ExternalLink,
-  Eye,
-  EyeOff,
   X,
   Layers,
   Save,
@@ -89,39 +86,6 @@ export default function AdminServicesPage() {
       .replace(/[^\w\s-]/g, '')
       .replace(/[\s_-]+/g, '-')
       .replace(/^-+|-+$/g, '');
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingImage(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'hari-krishna-cleaning/services');
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok && data.url) {
-        setEditingService((prev) => prev ? {
-          ...prev,
-          hero_image_url: data.url,
-          hero_image_public_id: data.public_id,
-        } : null);
-        showToast('Image uploaded successfully to Cloudinary!');
-      } else {
-        alert(data.error || 'Failed to upload image');
-      }
-    } catch (err: any) {
-      alert('Upload error: ' + err.message);
-    } finally {
-      setUploadingImage(false);
-    }
   };
 
   const handleToggleActive = async (service: ServiceItem) => {
@@ -464,52 +428,22 @@ export default function AdminServicesPage() {
                 />
               </div>
 
-              {/* Hero Image & Cloudinary Upload */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-slate-300">
-                  Service Hero Image (Cloudinary or Direct URL)
-                </label>
-
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  {/* Image Preview */}
-                  <div className="w-24 h-16 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden flex-shrink-0">
-                    <img
-                      src={editingService.hero_image_url || '/images/hero-cleaner.jpg'}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  {/* Upload button or URL input */}
-                  <div className="flex-1 w-full space-y-2">
-                    <input
-                      type="text"
-                      value={editingService.hero_image_url || ''}
-                      onChange={(e) =>
-                        setEditingService((prev) => prev ? { ...prev, hero_image_url: e.target.value } : null)
-                      }
-                      placeholder="Image URL or Cloudinary Link"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-300 text-xs focus:border-gold-500 focus:outline-none"
-                    />
-
-                    <label className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer transition-colors">
-                      {uploadingImage ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-gold-400" />
-                      ) : (
-                        <Upload className="w-3.5 h-3.5 text-gold-400" />
-                      )}
-                      <span>{uploadingImage ? 'Uploading to Cloudinary...' : 'Upload New Image to Cloudinary'}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        disabled={uploadingImage}
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                </div>
-              </div>
+              {/* Service Hero Image */}
+              <ImageUploader
+                label="Service Hero Image"
+                value={editingService.hero_image_url}
+                onChange={(url, storageId) => {
+                  setEditingService((prev) => prev ? {
+                    ...prev,
+                    hero_image_url: url,
+                    hero_image_public_id: storageId,
+                  } : null);
+                }}
+                recommendedSize="1600 × 900 px • Landscape"
+                aspectRatio="landscape"
+                category="services"
+                maxSizeMB={10}
+              />
 
               {/* Sort Order & Status */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-800">

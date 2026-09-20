@@ -3,12 +3,21 @@
 import React from 'react';
 import { Phone, CheckCircle2, ShieldCheck, Leaf, Sparkles, Calendar, ArrowRight } from 'lucide-react';
 import { companyInfo } from '../data/companyInfo';
+import { useBooking } from '@/components/BookingContext';
 
 interface HeroProps {
   onOpenBooking?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenBooking = () => {} }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
+  const { openBooking } = useBooking();
+  const handleBooking = () => {
+    if (onOpenBooking) {
+      onOpenBooking();
+    } else {
+      openBooking();
+    }
+  };
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/40 via-white to-white pt-2 sm:pt-4 pb-12 lg:pt-5 lg:pb-16">
       {/* Subtle Background Glows */}
@@ -160,8 +169,9 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking = () => {} }) => {
                     </div>
                   </div>
                   <button
-                    onClick={onOpenBooking}
-                    className="bg-gold-500 hover:bg-gold-400 text-teal-950 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 shadow-sm"
+                    type="button"
+                    onClick={handleBooking}
+                    className="bg-gold-500 hover:bg-gold-400 text-teal-950 px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 shadow-sm cursor-pointer"
                   >
                     <span>Book</span>
                     <ArrowRight className="w-3 h-3" />
@@ -182,10 +192,11 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking = () => {} }) => {
                   Get a quick quote in 60s
                 </div>
                 <button
-                  onClick={onOpenBooking}
-                  className="text-xs font-bold text-teal-800 hover:text-gold-600 inline-flex items-center gap-1 transition-colors"
+                  type="button"
+                  onClick={handleBooking}
+                  className="text-xs font-bold text-teal-800 hover:text-gold-600 inline-flex items-center gap-1 transition-colors cursor-pointer"
                 >
-                  <span>Book a Service</span>
+                  <span>Book Cleaning</span>
                   <ArrowRight className="w-3 h-3" />
                 </button>
               </div>

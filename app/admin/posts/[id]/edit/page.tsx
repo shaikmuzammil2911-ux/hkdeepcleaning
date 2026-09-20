@@ -4,8 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { PostItem } from '@/lib/types';
-import { ArrowLeft, Upload, Loader2, CheckCircle, Image as ImageIcon, Sparkles, RefreshCw } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle, Sparkles, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
+import { ImageUploader } from '@/components/admin/ImageUploader';
 
 export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -23,14 +24,9 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const [seoDescription, setSeoDescription] = useState('');
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
 
-  // Existing Image State
-  const [existingImageUrl, setExistingImageUrl] = useState('');
-  const [existingPublicId, setExistingPublicId] = useState('');
-
-  // New Image Replacement State
-  const [newImageFile, setNewImageFile] = useState<File | null>(null);
-  const [newPreviewUrl, setNewPreviewUrl] = useState<string | null>(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  // Image State
+  const [imageUrl, setImageUrl] = useState('');
+  const [imagePublicId, setImagePublicId] = useState('');
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,8 +52,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         setSeoTitle(post.seo_title || '');
         setSeoDescription(post.seo_description || '');
         setStatus(post.status || 'draft');
-        setExistingImageUrl(post.cover_image_url || '');
-        setExistingPublicId(post.cover_image_public_id || '');
+        setImageUrl(post.cover_image_url || '');
+        setImagePublicId(post.cover_image_public_id || '');
       } else {
         setError('Post not found in database.');
       }
@@ -65,19 +61,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     }
     loadPost();
   }, [postId]);
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        setError('Image file size must be less than 10MB.');
-        return;
-      }
-      setNewImageFile(file);
-      setNewPreviewUrl(URL.createObjectURL(file));
-      setError(null);
-    }
-  };
 
   const handleSave = async (targetStatus: 'draft' | 'published') => {
     setError(null);
@@ -88,38 +71,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
 
     setSaving(true);
     try {
-      let finalUrl = existingImageUrl;
-      let finalPublicId = existingPublicId;
-      let oldPublicIdToDelete = '';
-
-      // Safe image replacement (Section 11 logic)
-      if (newImageFile) {
-        setUploadingImage(true);
-        const formData = new FormData();
-        formData.append('file', newImageFile);
-        formData.append('category', 'posts');
-
-        const uploadRes = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const uploadData = await uploadRes.json();
-        if (!uploadRes.ok || !uploadData.success) {
-          throw new Error(uploadData.error || 'Failed to upload replacement image to Cloudinary');
-        }
-
-        // If upload succeeds, mark old public_id for deletion
-        oldPublicIdToDelete = existingPublicId;
-        finalUrl = uploadData.secure_url;
-        finalPublicId = uploadData.public_id;
-        setUploadingImage(false);
-      }
-
       const formattedTags = tags.split(',').map((t) => t.trim()).filter(Boolean);
       const supabase = createClient();
 
-      // Update database first
+      // Update database
       const { error: dbError } = await supabase
         .from('posts')
         .update({
@@ -127,8 +82,8 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
           slug,
           excerpt,
           content,
-          cover_image_url: finalUrl || null,
-          cover_image_public_id: finalPublicId || null,
+          cover_image_url: imageUrl || null,
+          cover_image_public_id: imagePublicId || null,
           status: targetStatus,
           category,
           tags: formattedTags,
@@ -140,15 +95,6 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         .eq('id', postId);
 
       if (dbError) throw dbError;
-
-      // Now safely delete old Cloudinary image if replaced
-      if (oldPublicIdToDelete) {
-        fetch('/api/cloudinary/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ public_id: oldPublicIdToDelete }),
-        }).catch((err) => console.warn('Old image cleanup error:', err));
-      }
 
       // Revalidate website
       await fetch('/api/revalidate', {
@@ -287,53 +233,19 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="lg:col-span-4 space-y-6">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-teal-400 flex items-center gap-2">
-              <ImageIcon className="w-4 h-4" />
-              <span>Cover Image (Cloudinary)</span>
-            </h3>
-
-            {/* Current Image Display */}
-            {existingImageUrl && !newPreviewUrl && (
-              <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
-                <img src={existingImageUrl} alt="Current" className="w-full h-40 object-cover" />
-                <div className="p-2 text-[10px] text-slate-400 bg-slate-900/90 truncate">
-                  ID: {existingPublicId || 'None'}
-                </div>
-              </div>
-            )}
-
-            {/* Replacement Image Preview */}
-            {newPreviewUrl && (
-              <div className="relative rounded-xl overflow-hidden border border-gold-500 bg-slate-950">
-                <img src={newPreviewUrl} alt="Replacement" className="w-full h-40 object-cover" />
-                <div className="p-2 text-[10px] text-gold-400 bg-slate-900/90 flex items-center justify-between">
-                  <span>Replacement Ready</span>
-                  <button
-                    onClick={() => {
-                      setNewImageFile(null);
-                      setNewPreviewUrl(null);
-                    }}
-                    className="text-red-400 hover:underline"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <label className="border-2 border-dashed border-slate-800 hover:border-teal-700 rounded-2xl p-4 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-950/50">
-              <RefreshCw className="w-6 h-6 text-slate-500 mb-1" />
-              <span className="text-xs text-slate-300 font-semibold">
-                {existingImageUrl ? 'Replace Image' : 'Upload Image'}
-              </span>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </label>
+          {/* Post Cover Image */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <ImageUploader
+              label="Article Cover Image"
+              value={imageUrl}
+              aspectRatio="landscape"
+              recommendedSize="1600 × 900 px • JPG, PNG or WEBP"
+              category="posts"
+              onChange={(url, publicId) => {
+                setImageUrl(url);
+                setImagePublicId(publicId || '');
+              }}
+            />
           </div>
 
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">

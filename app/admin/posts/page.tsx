@@ -263,8 +263,8 @@ export default function AdminPostsPage() {
             </div>
 
             <p className="text-xs text-slate-400 leading-relaxed">
-              Are you sure you want to delete <strong className="text-white">"{deleteModalPost.title}"</strong>?
-              This action cannot be undone. Associated Cloudinary image assets will be cleaned up safely.
+              Are you sure you want to delete <strong className="text-white">&quot;{deleteModalPost.title}&quot;</strong>?
+              This action cannot be undone. Associated image assets will be cleaned up safely.
             </p>
 
             <div className="flex items-center justify-end gap-3 pt-2">

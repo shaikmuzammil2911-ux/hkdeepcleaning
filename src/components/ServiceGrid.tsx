@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, Sparkles, Home, Building2, HardHat, Bath, Utensils, Castle, Truck } from 'lucide-react';
 import { servicesData } from '../data/servicesData';
 import { ServiceCard } from './ServiceCard';
+import { useBooking } from '@/components/BookingContext';
 
 interface ServiceGridProps {
   onOpenBooking?: (serviceSlug?: string) => void;
@@ -12,7 +13,16 @@ interface ServiceGridProps {
   services?: any[];
 }
 
-export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => {}, services }) => {
+export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking, services }) => {
+  const { openBooking } = useBooking();
+  const handleBooking = (slug?: string) => {
+    if (onOpenBooking) {
+      onOpenBooking(slug);
+    } else {
+      openBooking(slug);
+    }
+  };
+
   const displayServices = services && services.length > 0 ? services : servicesData;
 
   const getServiceIcon = (name: string) => {
@@ -75,7 +85,7 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => 
             <ServiceCard
               key={service.id || service.slug}
               service={service}
-              onQuickBook={onOpenBooking}
+              onQuickBook={handleBooking}
             />
           ))}
         </div>
@@ -91,8 +101,9 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => 
           </Link>
 
           <button
-            onClick={() => onOpenBooking()}
-            className="btn-gold px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2"
+            type="button"
+            onClick={() => handleBooking()}
+            className="btn-gold px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer shadow-md hover:shadow-lg transition-all"
           >
             <span>Book Custom Service</span>
           </button>

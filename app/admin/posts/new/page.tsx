@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import { ArrowLeft, Upload, Loader2, CheckCircle, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { ImageUploader } from '@/components/admin/ImageUploader';
 
 export default function CreatePostPage() {
   const router = useRouter();
@@ -20,10 +21,7 @@ export default function CreatePostPage() {
   const [seoDescription, setSeoDescription] = useState('');
   const [status, setStatus] = useState<'draft' | 'published'>('draft');
 
-  // Image Upload State
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  // Image State
   const [imageUrl, setImageUrl] = useState('');
   const [imagePublicId, setImagePublicId] = useState('');
 
@@ -43,49 +41,6 @@ export default function CreatePostPage() {
     }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        setError('Image file size must be less than 10MB.');
-        return;
-      }
-      setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-      setError(null);
-    }
-  };
-
-  const handleUploadToCloudinary = async (): Promise<{ url: string; publicId: string } | null> => {
-    if (!imageFile) return null;
-    setUploadingImage(true);
-
-    try {
-      const formData = new FormData();
-      formData.append('file', imageFile);
-      formData.append('category', 'posts');
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to upload image to Cloudinary');
-      }
-
-      setImageUrl(data.secure_url);
-      setImagePublicId(data.public_id);
-      return { url: data.secure_url, publicId: data.public_id };
-    } catch (err: any) {
-      setError(err?.message || 'Cloudinary upload error');
-      return null;
-    } finally {
-      setUploadingImage(false);
-    }
-  };
-
   const handleSubmit = async (targetStatus: 'draft' | 'published') => {
     setError(null);
     if (!title || !content) {
@@ -95,18 +50,6 @@ export default function CreatePostPage() {
 
     setSaving(true);
     try {
-      let finalImageUrl = imageUrl;
-      let finalPublicId = imagePublicId;
-
-      // Upload image first if file selected but not uploaded yet
-      if (imageFile && !imageUrl) {
-        const uploaded = await handleUploadToCloudinary();
-        if (uploaded) {
-          finalImageUrl = uploaded.url;
-          finalPublicId = uploaded.publicId;
-        }
-      }
-
       const formattedTags = tags.split(',').map((t) => t.trim()).filter(Boolean);
       const finalSeoTitle = seoTitle || title;
       const finalSeoDesc = seoDescription || excerpt;
@@ -118,8 +61,8 @@ export default function CreatePostPage() {
           slug: slug || title.toLowerCase().replace(/\s+/g, '-'),
           excerpt,
           content,
-          cover_image_url: finalImageUrl || null,
-          cover_image_public_id: finalPublicId || null,
+          cover_image_url: imageUrl || null,
+          cover_image_public_id: imagePublicId || null,
           status: targetStatus,
           category,
           tags: formattedTags,
@@ -280,70 +223,19 @@ export default function CreatePostPage() {
 
         {/* Sidebar Controls */}
         <div className="lg:col-span-4 space-y-6">
-          {/* Cloudinary Cover Image Upload */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-            <h3 className="text-xs font-extrabold uppercase tracking-wider text-teal-400 flex items-center gap-2">
-              <ImageIcon className="w-4 h-4" />
-              <span>Cover Image (Cloudinary)</span>
-            </h3>
-
-            {previewUrl ? (
-              <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-slate-950">
-                <img src={previewUrl} alt="Preview" className="w-full h-40 object-cover" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setImageFile(null);
-                    setPreviewUrl(null);
-                    setImageUrl('');
-                    setImagePublicId('');
-                  }}
-                  className="absolute top-2 right-2 bg-red-950 text-red-300 px-2.5 py-1 rounded-lg text-[10px] font-bold"
-                >
-                  Remove
-                </button>
-              </div>
-            ) : (
-              <label className="border-2 border-dashed border-slate-800 hover:border-teal-700 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-950/50">
-                <Upload className="w-8 h-8 text-slate-500 mb-2" />
-                <span className="text-xs text-slate-300 font-semibold">Upload Cover Image</span>
-                <span className="text-[10px] text-slate-500 mt-1">JPG, PNG, WEBP up to 10MB</span>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
-            )}
-
-            {imageFile && !imageUrl && (
-              <button
-                type="button"
-                onClick={handleUploadToCloudinary}
-                disabled={uploadingImage}
-                className="w-full py-2.5 rounded-xl bg-teal-900 hover:bg-teal-800 text-teal-200 text-xs font-bold flex items-center justify-center gap-2 border border-teal-700"
-              >
-                {uploadingImage ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Uploading to Cloudinary...</span>
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>Upload to Cloudinary Now</span>
-                  </>
-                )}
-              </button>
-            )}
-
-            {imageUrl && (
-              <div className="text-[10px] text-emerald-400 bg-emerald-950/60 p-2.5 rounded-xl border border-emerald-800 flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">Cloudinary Uploaded &bull; ID saved</span>
-              </div>
-            )}
+          {/* Post Cover Image */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+            <ImageUploader
+              label="Article Cover Image"
+              value={imageUrl}
+              aspectRatio="landscape"
+              recommendedSize="1600 × 900 px • JPG, PNG or WEBP"
+              category="posts"
+              onChange={(url, publicId) => {
+                setImageUrl(url);
+                setImagePublicId(publicId || '');
+              }}
+            />
           </div>
 
           {/* Category & Tags */}

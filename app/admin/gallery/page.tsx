@@ -10,13 +10,13 @@ import {
   CheckCircle,
   RefreshCw,
   Loader2,
-  Upload,
   Image as ImageIcon,
   X,
   Save,
   AlertTriangle,
   Sparkles,
 } from 'lucide-react';
+import { ImageUploader } from '@/components/admin/ImageUploader';
 
 export default function AdminGalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
@@ -29,8 +29,6 @@ export default function AdminGalleryPage() {
   const [deleteConfirmItem, setDeleteConfirmItem] = useState<GalleryItem | null>(null);
 
   const [saving, setSaving] = useState(false);
-  const [uploadingBefore, setUploadingBefore] = useState(false);
-  const [uploadingAfter, setUploadingAfter] = useState(false);
 
   const fetchGallery = async () => {
     setLoading(true);
@@ -76,68 +74,6 @@ export default function AdminGalleryPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingItem(null);
-  };
-
-  // Upload Before Image to Cloudinary
-  const handleUploadBefore = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingBefore(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'hari-krishna-cleaning/gallery');
-
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
-
-      if (res.ok && data.url) {
-        setEditingItem((prev) => prev ? {
-          ...prev,
-          before_image_url: data.url,
-          before_image_public_id: data.public_id,
-        } : null);
-        showToast('Before image uploaded successfully!');
-      } else {
-        alert(data.error || 'Failed to upload before image');
-      }
-    } catch (err: any) {
-      alert('Upload error: ' + err.message);
-    } finally {
-      setUploadingBefore(false);
-    }
-  };
-
-  // Upload After Image to Cloudinary
-  const handleUploadAfter = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingAfter(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'hari-krishna-cleaning/gallery');
-
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
-
-      if (res.ok && data.url) {
-        setEditingItem((prev) => prev ? {
-          ...prev,
-          after_image_url: data.url,
-          after_image_public_id: data.public_id,
-        } : null);
-        showToast('After image uploaded successfully!');
-      } else {
-        alert(data.error || 'Failed to upload after image');
-      }
-    } catch (err: any) {
-      alert('Upload error: ' + err.message);
-    } finally {
-      setUploadingAfter(false);
-    }
   };
 
   const handleSaveGalleryItem = async (e: React.FormEvent) => {
@@ -448,90 +384,36 @@ export default function AdminGalleryPage() {
               {/* Before & After Images */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 border-t border-slate-800">
                 {/* Before Image */}
-                <div className="space-y-3 p-4 rounded-2xl bg-slate-950/60 border border-slate-800">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
-                      🔴 Before Image *
-                    </span>
-                  </div>
-
-                  <div className="h-32 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden relative">
-                    <img
-                      src={editingItem.before_image_url || 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80'}
-                      alt="Before Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  <input
-                    type="text"
-                    value={editingItem.before_image_url || ''}
-                    onChange={(e) =>
-                      setEditingItem((prev) => prev ? { ...prev, before_image_url: e.target.value } : null)
-                    }
-                    placeholder="Image URL or Cloudinary Link"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs focus:border-gold-500 focus:outline-none"
-                  />
-
-                  <label className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer transition-colors">
-                    {uploadingBefore ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-red-400" />
-                    ) : (
-                      <Upload className="w-3.5 h-3.5 text-red-400" />
-                    )}
-                    <span>{uploadingBefore ? 'Uploading Before Image...' : 'Upload Before Image to Cloudinary'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      disabled={uploadingBefore}
-                      onChange={handleUploadBefore}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
+                <ImageUploader
+                  label="Before Image (Before Cleaning)"
+                  value={editingItem.before_image_url}
+                  aspectRatio="landscape"
+                  recommendedSize="1600 × 1200 px • JPG, PNG or WEBP"
+                  category="gallery"
+                  onChange={(url, publicId) => {
+                    setEditingItem((prev) => prev ? {
+                      ...prev,
+                      before_image_url: url,
+                      before_image_public_id: publicId || null,
+                    } : null);
+                  }}
+                />
 
                 {/* After Image */}
-                <div className="space-y-3 p-4 rounded-2xl bg-slate-950/60 border border-slate-800">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
-                      🟢 After Image *
-                    </span>
-                  </div>
-
-                  <div className="h-32 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden relative">
-                    <img
-                      src={editingItem.after_image_url || '/images/kitchen-cleaning.jpg'}
-                      alt="After Preview"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  <input
-                    type="text"
-                    value={editingItem.after_image_url || ''}
-                    onChange={(e) =>
-                      setEditingItem((prev) => prev ? { ...prev, after_image_url: e.target.value } : null)
-                    }
-                    placeholder="Image URL or Cloudinary Link"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs focus:border-gold-500 focus:outline-none"
-                  />
-
-                  <label className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer transition-colors">
-                    {uploadingAfter ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" />
-                    ) : (
-                      <Upload className="w-3.5 h-3.5 text-emerald-400" />
-                    )}
-                    <span>{uploadingAfter ? 'Uploading After Image...' : 'Upload After Image to Cloudinary'}</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      disabled={uploadingAfter}
-                      onChange={handleUploadAfter}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
+                <ImageUploader
+                  label="After Image (After Cleaning)"
+                  value={editingItem.after_image_url}
+                  aspectRatio="landscape"
+                  recommendedSize="1600 × 1200 px • JPG, PNG or WEBP"
+                  category="gallery"
+                  onChange={(url, publicId) => {
+                    setEditingItem((prev) => prev ? {
+                      ...prev,
+                      after_image_url: url,
+                      after_image_public_id: publicId || null,
+                    } : null);
+                  }}
+                />
               </div>
 
               {/* Sort Order & Visibility */}
@@ -579,7 +461,7 @@ export default function AdminGalleryPage() {
 
                 <button
                   type="submit"
-                  disabled={saving || uploadingBefore || uploadingAfter}
+                  disabled={saving}
                   className="btn-gold px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg disabled:opacity-50"
                 >
                   {saving ? (
