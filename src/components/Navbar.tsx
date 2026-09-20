@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ChevronDown, Menu, X, Calendar, Phone, Sparkles, Home, Building2, HardHat, Bath, Utensils, Castle, Truck } from 'lucide-react';
 import { Logo } from './Logo';
 import { servicesData } from '../data/servicesData';
@@ -13,7 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,12 +30,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsServicesDropdownOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about' },
     { name: 'Services', path: '/services', hasDropdown: true },
+    { name: 'Blog', path: '/posts' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Testimonials', path: '/testimonials' },
     { name: 'Service Areas', path: '/service-areas' },
@@ -55,8 +59,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
   };
 
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
-    return location.pathname.startsWith(path);
+    if (!pathname) return false;
+    if (path === '/') return pathname === '/';
+    return pathname.startsWith(path);
   };
 
   return (
@@ -83,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
                   onMouseLeave={() => setIsServicesDropdownOpen(false)}
                 >
                   <Link
-                    to={link.path}
+                    href={link.path}
                     className={`inline-flex items-center gap-1 text-sm font-semibold transition-colors duration-200 ${
                       isActive('/services')
                         ? 'text-teal-800 font-bold border-b-2 border-gold-500 pb-0.5'
@@ -108,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
                           8+ Cleaning Services
                         </span>
                         <Link
-                          to="/services"
+                          href="/services"
                           className="text-[11px] font-semibold text-gold-600 hover:underline"
                         >
                           View All →
@@ -119,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
                         {servicesData.map((service) => (
                           <Link
                             key={service.id}
-                            to={`/services/${service.slug}`}
+                            href={`/services/${service.slug}`}
                             className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-teal-50 text-slate-700 hover:text-teal-900 transition-colors group/item"
                           >
                             <div className="w-7 h-7 rounded-lg bg-teal-100 text-teal-800 flex items-center justify-center group-hover/item:bg-gold-500 group-hover/item:text-white transition-colors">
@@ -145,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
             return (
               <Link
                 key={link.name}
-                to={link.path}
+                href={link.path}
                 className={`text-sm font-semibold transition-colors duration-200 relative ${
                   isActive(link.path)
                     ? 'text-teal-800 font-bold'
@@ -210,7 +215,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
               {navLinks.map((link) => (
                 <div key={link.name} className="border-b border-slate-100 pb-2">
                   <Link
-                    to={link.path}
+                    href={link.path}
                     className={`block text-base font-semibold py-1 ${
                       isActive(link.path)
                         ? 'text-teal-800 font-bold pl-2 border-l-4 border-gold-500'
@@ -225,7 +230,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking }) => {
                       {servicesData.map((svc) => (
                         <Link
                           key={svc.id}
-                          to={`/services/${svc.slug}`}
+                          href={`/services/${svc.slug}`}
                           className="text-xs text-slate-600 hover:text-teal-800 py-1 flex items-center gap-2"
                         >
                           <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />

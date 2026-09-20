@@ -1,7 +1,8 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { MapPin, Target, Award, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { companyInfo } from '../data/companyInfo';
 
 export const AboutSection: React.FC = () => {
   return (
@@ -42,7 +43,7 @@ export const AboutSection: React.FC = () => {
             <div className="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-gold-400/40 rounded-3xl -z-10 hidden sm:block" />
           </div>
 
-          {/* Right Column: Content & 3 Info Badges */}
+          {/* Right Column: Content */}
           <div className="lg:col-span-7 flex flex-col justify-center text-left">
             <div className="inline-flex items-center gap-2 self-start bg-teal-100/70 px-3.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-widest text-teal-900 mb-3">
               <span>ABOUT US</span>
@@ -60,9 +61,9 @@ export const AboutSection: React.FC = () => {
               With a focus on hygiene, safety and customer satisfaction, we ensure every space is cleaned with care and professionalism.
             </p>
 
-            {/* 3 Info Cards matching image.png reference */}
+            {/* 3 Info Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-8">
-              {/* Card 1: Experience / Positioning */}
+              {/* Card 1 */}
               <div className="bg-teal-50/60 border border-teal-100 p-3.5 rounded-2xl flex flex-col justify-between">
                 <div className="w-8 h-8 rounded-lg bg-teal-800 text-gold-400 flex items-center justify-center mb-2">
                   <Award className="w-4 h-4" />
@@ -77,7 +78,7 @@ export const AboutSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Card 2: Location */}
+              {/* Card 2 */}
               <div className="bg-teal-50/60 border border-teal-100 p-3.5 rounded-2xl flex flex-col justify-between">
                 <div className="w-8 h-8 rounded-lg bg-teal-800 text-gold-400 flex items-center justify-center mb-2">
                   <MapPin className="w-4 h-4" />
@@ -92,7 +93,7 @@ export const AboutSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* Card 3: Mission */}
+              {/* Card 3 */}
               <div className="bg-teal-50/60 border border-teal-100 p-3.5 rounded-2xl flex flex-col justify-between">
                 <div className="w-8 h-8 rounded-lg bg-teal-800 text-gold-400 flex items-center justify-center mb-2">
                   <Target className="w-4 h-4" />
@@ -128,7 +129,7 @@ export const AboutSection: React.FC = () => {
             {/* CTA Button */}
             <div>
               <Link
-                to="/about"
+                href="/about"
                 className="btn-gold inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition-all"
               >
                 <span>Learn More About Us</span>

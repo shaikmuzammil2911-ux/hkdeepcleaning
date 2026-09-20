@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight, Home, Building2, HardHat, Bath, Utensils, Castle, Sparkles, Truck } from 'lucide-react';
 import { ServiceItem } from '../data/servicesData';
 
@@ -52,7 +54,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         {/* Title & Description */}
         <div>
           <h3 className="text-lg font-display font-bold text-teal-950 group-hover:text-teal-700 transition-colors mb-2">
-            <Link to={`/services/${service.slug}`}>
+            <Link href={`/services/${service.slug}`}>
               {service.title}
             </Link>
           </h3>
@@ -64,14 +66,14 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => {
         {/* Card Footer: View Details & Arrow */}
         <div className="pt-2 border-t border-slate-100 flex items-center justify-between mt-auto">
           <Link
-            to={`/services/${service.slug}`}
+            href={`/services/${service.slug}`}
             className="text-xs font-bold text-teal-800 group-hover:text-gold-600 transition-colors inline-flex items-center gap-1.5"
           >
             <span>View Service</span>
           </Link>
 
           <Link
-            to={`/services/${service.slug}`}
+            href={`/services/${service.slug}`}
             aria-label={`View details for ${service.title}`}
             className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center group-hover:bg-teal-700 group-hover:translate-x-1 transition-all duration-200"
           >

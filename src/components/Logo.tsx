@@ -1,5 +1,7 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 interface LogoProps {
   className?: string;
@@ -22,8 +24,8 @@ export const Logo: React.FC<LogoProps> = ({
       : 'w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20';
 
   return (
-    <Link to="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
-      {/* Actual HK Circular Logo PNG - Clean Transparent Outer Background */}
+    <Link href="/" className={`inline-flex items-center gap-3 group select-none ${className}`}>
+      {/* Actual HK Circular Logo PNG */}
       <img
         src="/images/hk-logo.png"
         alt="Hari Krishna Cleaning Services Logo"
@@ -72,4 +74,3 @@ export const Logo: React.FC<LogoProps> = ({
     </Link>
   );
 };
-

@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
-import { Star, ChevronLeft, ChevronRight, Quote, MapPin, CheckCircle } from 'lucide-react';
+import { Star, ChevronLeft, ChevronRight, MapPin, CheckCircle } from 'lucide-react';
 import { testimonialsData } from '../data/testimonialsData';
 
 export const Testimonials: React.FC = () => {
@@ -39,7 +41,7 @@ export const Testimonials: React.FC = () => {
           </p>
         </div>
 
-        {/* Desktop 3-Card Grid or Carousel */}
+        {/* Desktop 3-Card Grid */}
         <div
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
           onMouseEnter={() => setIsPaused(true)}
@@ -51,20 +53,17 @@ export const Testimonials: React.FC = () => {
               className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all duration-300 flex flex-col justify-between relative group"
             >
               <div>
-                {/* 5 Gold Stars */}
                 <div className="flex items-center gap-1 mb-4 text-gold-500">
                   {[...Array(item.rating)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-gold-500" />
                   ))}
                 </div>
 
-                {/* Review Quote */}
                 <p className="text-slate-700 text-xs sm:text-sm leading-relaxed mb-6 italic relative">
                   &ldquo;{item.review}&rdquo;
                 </p>
               </div>
 
-              {/* Author Info */}
               <div className="flex items-center gap-3 pt-4 border-t border-slate-200/60">
                 <img
                   src={item.avatarUrl}
@@ -77,9 +76,7 @@ export const Testimonials: React.FC = () => {
                     <h4 className="text-xs font-bold text-teal-950 truncate">
                       {item.name}
                     </h4>
-                    {item.verified && (
-                      <CheckCircle className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
-                    )}
+                    <CheckCircle className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                   </div>
                   <div className="text-[11px] text-slate-500 flex items-center gap-1 truncate">
                     <MapPin className="w-3 h-3 text-gold-600" />
@@ -94,7 +91,7 @@ export const Testimonials: React.FC = () => {
           ))}
         </div>
 
-        {/* Carousel indicator & controls */}
+        {/* Carousel controls */}
         <div className="mt-8 flex items-center justify-center gap-4">
           <button
             onClick={handlePrev}

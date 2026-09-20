@@ -1,12 +1,14 @@
+'use client';
+
 import React from 'react';
 import { Phone, CheckCircle2, ShieldCheck, Leaf, Sparkles, Calendar, ArrowRight } from 'lucide-react';
 import { companyInfo } from '../data/companyInfo';
 
 interface HeroProps {
-  onOpenBooking: () => void;
+  onOpenBooking?: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
+export const Hero: React.FC<HeroProps> = ({ onOpenBooking = () => {} }) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-teal-50/40 via-white to-white pt-6 pb-16 lg:pt-12 lg:pb-24">
       {/* Subtle Background Glows */}
@@ -76,9 +78,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               </div>
             </div>
 
-            {/* Primary Action Buttons matching Reference */}
+            {/* Primary Action Buttons */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              {/* Primary Call Button */}
               <a
                 href={`tel:${companyInfo.phoneClean}`}
                 id="hero-call-now-btn"
@@ -97,7 +98,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 </div>
               </a>
 
-              {/* Secondary WhatsApp Button */}
               <a
                 href={companyInfo.whatsappUrl}
                 target="_blank"
@@ -119,7 +119,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               </a>
             </div>
 
-            {/* Micro guarantee text */}
             <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
               <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
               <span>Direct Booking &bull; Hyderabad Local Specialists &bull; Serving All Neighborhoods</span>
@@ -127,9 +126,8 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
 
           </div>
 
-          {/* Right Column: Hero Visual, Badge & Quick Booking Card */}
+          {/* Right Column */}
           <div className="lg:col-span-5 relative mt-4 lg:mt-0">
-            {/* Main Visual Frame */}
             <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white ring-1 ring-slate-200/60 bg-slate-100 group">
               <img
                 src="/images/hero-cleaner.jpg"
@@ -139,7 +137,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
-              {/* Floating "Clean Spaces Better Lives" Script Badge */}
               <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl border border-gold-200/60 flex items-center gap-2 animate-float">
                 <Leaf className="w-4 h-4 text-emerald-600" />
                 <div className="text-left">
@@ -152,7 +149,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
                 </div>
               </div>
 
-              {/* Bottom Overlay Info on Hero Image */}
               <div className="absolute bottom-4 left-4 right-4 text-white">
                 <div className="bg-teal-950/80 backdrop-blur-md p-3.5 rounded-2xl border border-white/10 flex items-center justify-between">
                   <div>
@@ -174,7 +170,6 @@ export const Hero: React.FC<HeroProps> = ({ onOpenBooking }) => {
               </div>
             </div>
 
-            {/* Desktop Floating Quick Quote Card */}
             <div className="hidden sm:flex absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl border border-slate-100 items-center gap-3.5 max-w-[260px] ring-1 ring-black/5 z-20">
               <div className="w-10 h-10 rounded-xl bg-gold-500 text-white flex items-center justify-center flex-shrink-0 shadow-md">
                 <Calendar className="w-5 h-5" />

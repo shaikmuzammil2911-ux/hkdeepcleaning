@@ -1,5 +1,7 @@
+'use client';
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight, MapPin, ZoomIn } from 'lucide-react';
 import { galleryData, GalleryItem } from '../data/galleryData';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
@@ -60,7 +62,7 @@ export const BeforeAfterGallery: React.FC<BeforeAfterGalleryProps> = ({
 
           <div className="flex items-center gap-3">
             <Link
-              to="/gallery"
+              href="/gallery"
               className="text-xs font-bold text-teal-800 hover:text-gold-600 inline-flex items-center gap-1.5 transition-colors"
             >
               <span>View More Gallery</span>

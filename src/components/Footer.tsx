@@ -1,6 +1,8 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Clock, MessageSquare, Heart, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
+import { MapPin, Phone, Mail, Clock, MessageSquare, ShieldCheck } from 'lucide-react';
 import { Logo } from './Logo';
 import { companyInfo } from '../data/companyInfo';
 import { servicesData } from '../data/servicesData';
@@ -15,7 +17,7 @@ export const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 pb-12 border-b border-teal-800/60">
           
-          {/* Col 1: Brand Info (4 cols) */}
+          {/* Col 1: Brand Info */}
           <div className="lg:col-span-4 flex flex-col justify-between">
             <div>
               <div className="bg-white/10 p-2.5 rounded-2xl inline-block mb-4 border border-white/10">
@@ -60,7 +62,7 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Col 2: Quick Links (2 cols) */}
+          {/* Col 2: Quick Links */}
           <div className="lg:col-span-2">
             <h3 className="text-xs font-extrabold uppercase tracking-wider text-gold-400 mb-4 pb-1 border-b border-teal-800/80">
               Quick Links
@@ -70,15 +72,17 @@ export const Footer: React.FC = () => {
                 { name: 'Home', path: '/' },
                 { name: 'About Us', path: '/about' },
                 { name: 'Services', path: '/services' },
+                { name: 'Blog', path: '/posts' },
                 { name: 'Before & After Gallery', path: '/gallery' },
                 { name: 'Customer Testimonials', path: '/testimonials' },
                 { name: 'Service Areas', path: '/service-areas' },
                 { name: 'FAQ', path: '/faq' },
                 { name: 'Contact & Booking', path: '/contact' },
+                { name: 'Admin CMS', path: '/admin/login' },
               ].map((link) => (
                 <li key={link.name}>
                   <Link
-                    to={link.path}
+                    href={link.path}
                     className="text-slate-300 hover:text-gold-300 transition-colors flex items-center gap-1.5"
                   >
                     <span className="text-gold-500 text-[10px]">&rsaquo;</span>
@@ -89,7 +93,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 3: Cleaning Services (3 cols) */}
+          {/* Col 3: Cleaning Services */}
           <div className="lg:col-span-3">
             <h3 className="text-xs font-extrabold uppercase tracking-wider text-gold-400 mb-4 pb-1 border-b border-teal-800/80">
               Our Cleaning Services
@@ -98,7 +102,7 @@ export const Footer: React.FC = () => {
               {servicesData.map((svc) => (
                 <li key={svc.id}>
                   <Link
-                    to={`/services/${svc.slug}`}
+                    href={`/services/${svc.slug}`}
                     className="text-slate-300 hover:text-gold-300 transition-colors flex items-center gap-1.5 truncate"
                   >
                     <span className="text-emerald-400 text-[10px]">&rsaquo;</span>
@@ -109,7 +113,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 4: Contact & Office (3 cols) */}
+          {/* Col 4: Contact & Office */}
           <div className="lg:col-span-3">
             <h3 className="text-xs font-extrabold uppercase tracking-wider text-gold-400 mb-4 pb-1 border-b border-teal-800/80">
               Contact &amp; Location
@@ -160,7 +164,7 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        {/* Bottom Bar: Copyright & Legal */}
+        {/* Bottom Bar: Copyright */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <div>
             &copy; 2026 <strong className="text-slate-200">Hari Krishna Deep Cleaning Services</strong>. All Rights Reserved.

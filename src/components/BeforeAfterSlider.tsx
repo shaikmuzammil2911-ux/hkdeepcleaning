@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useRef, useCallback } from 'react';
 import { Sparkles } from 'lucide-react';
 
@@ -51,7 +53,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
     >
-      {/* After Image (Background / Full Width) */}
+      {/* After Image */}
       <img
         src={afterImage}
         alt="After Deep Cleaning Result"
@@ -59,7 +61,7 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         loading="lazy"
       />
 
-      {/* Before Image (Clipped Overlay) */}
+      {/* Before Image */}
       <div
         className="absolute inset-0 overflow-hidden"
         style={{ clipPath: `polygon(0 0, ${sliderPosition}% 0, ${sliderPosition}% 100%, 0 100%)` }}
@@ -70,18 +72,15 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
           className="w-full h-full object-cover object-center pointer-events-none"
           loading="lazy"
         />
-        {/* Before Tag */}
         <span className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border border-white/20">
           {beforeLabel}
         </span>
       </div>
 
-      {/* After Tag */}
       <span className="absolute top-3 right-3 bg-teal-900/90 backdrop-blur-xs text-gold-300 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-md border border-gold-400/40">
         {afterLabel}
       </span>
 
-      {/* Draggable Divider Line & Handle */}
       <div
         className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize z-20 shadow-[0_0_10px_rgba(0,0,0,0.5)]"
         style={{ left: `${sliderPosition}%` }}
@@ -94,7 +93,6 @@ export const BeforeAfterSlider: React.FC<BeforeAfterSliderProps> = ({
         </div>
       </div>
 
-      {/* Bottom Title Bar if provided */}
       {title && (
         <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3 text-white">
           <div className="flex items-center justify-between">

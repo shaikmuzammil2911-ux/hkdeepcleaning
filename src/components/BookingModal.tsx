@@ -1,7 +1,8 @@
+'use client';
+
 import React, { useEffect } from 'react';
 import { X, Sparkles, ShieldCheck } from 'lucide-react';
 import { BookingForm } from './BookingForm';
-import { companyInfo } from '../data/companyInfo';
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -14,7 +15,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   onClose,
   serviceSlug,
 }) => {
-  // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -26,7 +26,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
     };
   }, [isOpen]);
 
-  // Handle ESC key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
@@ -51,7 +50,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         className="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-100 overflow-hidden relative popup-enter my-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Modal Header Banner */}
         <div className="bg-gradient-to-r from-teal-950 via-teal-900 to-teal-950 text-white p-5 sm:p-6 relative border-b border-teal-800">
           <button
             onClick={onClose}
@@ -85,7 +83,6 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           </div>
         </div>
 
-        {/* Modal Body */}
         <div className="p-5 sm:p-6 max-h-[75vh] overflow-y-auto">
           <BookingForm
             initialService={serviceSlug}

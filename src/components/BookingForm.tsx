@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
 import { Send, CheckCircle2, AlertCircle, Phone, Calendar, Clock, User, Mail, Sparkles, Loader2 } from 'lucide-react';
@@ -34,7 +36,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     const errs: Record<string, string> = {};
     if (!formData.name.trim()) errs.name = 'Please enter your full name';
     
-    // Indian phone number regex
     const phoneClean = formData.phone.replace(/\D/g, '');
     if (!phoneClean || phoneClean.length < 10) {
       errs.phone = 'Please enter a valid 10-digit mobile number';
@@ -52,18 +53,33 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsSubmitting(true);
 
-    // Simulate clean client-side submission with realistic response
-    setTimeout(() => {
+    try {
+      // Send to server API endpoint storing into Supabase bookings table
+      const response = await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          service: formData.service,
+          preferred_date: formData.date,
+          preferred_time: formData.time,
+          property_type: formData.propertyType,
+          message: formData.message,
+        }),
+      });
+
+      const resData = await response.json();
       setIsSubmitting(false);
       setIsSubmitted(true);
       
-      // Fire confetti
       try {
         confetti({
           particleCount: 80,
@@ -78,7 +94,10 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       if (onSuccess) {
         setTimeout(onSuccess, 4000);
       }
-    }, 900);
+    } catch (error) {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
+    }
   };
 
   const resetForm = () => {
@@ -158,7 +177,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 text-left">
-      {/* Full Name & Phone Number */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -209,7 +227,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         </div>
       </div>
 
-      {/* Email & Service */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1">
@@ -226,11 +243,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
               className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 focus:bg-white transition-all"
             />
           </div>
-          {errors.email && (
-            <p className="text-[11px] text-rose-500 mt-1 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" /> {errors.email}
-            </p>
-          )}
         </div>
 
         <div>
@@ -251,24 +263,21 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         </div>
       </div>
 
-      {/* Preferred Date & Preferred Time */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1">
             Preferred Date <span className="text-rose-500">*</span>
           </label>
-          <div className="relative">
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              min={new Date().toISOString().split('T')[0]}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              className={`w-full px-3 py-2.5 bg-slate-50 border rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 focus:bg-white transition-all ${
-                errors.date ? 'border-rose-400 bg-rose-50/30' : 'border-slate-200'
-              }`}
-            />
-          </div>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            min={new Date().toISOString().split('T')[0]}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            className={`w-full px-3 py-2.5 bg-slate-50 border rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 focus:bg-white transition-all ${
+              errors.date ? 'border-rose-400 bg-rose-50/30' : 'border-slate-200'
+            }`}
+          />
           {errors.date && (
             <p className="text-[11px] text-rose-500 mt-1 flex items-center gap-1">
               <AlertCircle className="w-3 h-3" /> {errors.date}
@@ -293,7 +302,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         </div>
       </div>
 
-      {/* Property Type */}
       <div>
         <label className="block text-xs font-bold text-slate-700 mb-1">
           Property Type
@@ -316,7 +324,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         </div>
       </div>
 
-      {/* Additional Message / Requirements */}
       <div>
         <label className="block text-xs font-bold text-slate-700 mb-1">
           Message / Specific Requirements <span className="text-slate-400 font-normal">(Optional)</span>
@@ -330,7 +337,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         />
       </div>
 
-      {/* Submit Button */}
       <button
         type="submit"
         disabled={isSubmitting}

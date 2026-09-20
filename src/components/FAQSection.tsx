@@ -1,9 +1,12 @@
+'use client';
+
 import React, { useState } from 'react';
 import { ChevronDown, HelpCircle, Phone, MessageSquare } from 'lucide-react';
 import { faqData, FaqItem } from '../data/faqData';
 import { companyInfo } from '../data/companyInfo';
 
 interface FAQSectionProps {
+  onOpenBooking?: () => void;
   limit?: number;
   showContactCTA?: boolean;
 }

@@ -1,15 +1,17 @@
+'use client';
+
 import React from 'react';
 import { Phone, Calendar, Sparkles, CheckCircle2, Shield } from 'lucide-react';
 import { companyInfo } from '../data/companyInfo';
 
 interface CTASectionProps {
-  onOpenBooking: () => void;
+  onOpenBooking?: () => void;
   title?: string;
   subtitle?: string;
 }
 
 export const CTASection: React.FC<CTASectionProps> = ({
-  onOpenBooking,
+  onOpenBooking = () => {},
   title = "Ready for a Cleaner, Healthier & Happier Space?",
   subtitle = "Experience Hyderabad's trusted deep cleaning specialists. Contact us now for quick quotes and instant service booking.",
 }) => {

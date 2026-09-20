@@ -1,15 +1,17 @@
+'use client';
+
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight, Sparkles, Home, Building2, HardHat, Bath, Utensils, Castle, Truck } from 'lucide-react';
 import { servicesData } from '../data/servicesData';
 import { ServiceCard } from './ServiceCard';
 
 interface ServiceGridProps {
-  onOpenBooking: (serviceSlug?: string) => void;
+  onOpenBooking?: (serviceSlug?: string) => void;
   showAll?: boolean;
 }
 
-export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking }) => {
+export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking = () => {} }) => {
   const getServiceIcon = (name: string) => {
     switch (name) {
       case 'Home': return <Home className="w-5 h-5" />;
@@ -42,12 +44,12 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking }) => {
           </p>
         </div>
 
-        {/* Mobile Quick Service Buttons (Matching image copy.png mobile layout) */}
+        {/* Mobile Quick Service Buttons */}
         <div className="grid grid-cols-2 gap-2.5 mb-8 md:hidden">
           {servicesData.map((svc) => (
             <Link
               key={`mob-${svc.id}`}
-              to={`/services/${svc.slug}`}
+              href={`/services/${svc.slug}`}
               className="bg-white rounded-xl p-3 border border-teal-100 shadow-xs flex items-center gap-2.5 active:bg-teal-50 transition-colors"
             >
               <div className="w-8 h-8 rounded-lg bg-teal-800 text-white flex items-center justify-center flex-shrink-0">
@@ -60,7 +62,7 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking }) => {
           ))}
         </div>
 
-        {/* Desktop / Tablet Cards Grid (4 columns desktop, 2 columns tablet) */}
+        {/* Desktop / Tablet Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {servicesData.map((service) => (
             <ServiceCard
@@ -74,7 +76,7 @@ export const ServiceGrid: React.FC<ServiceGridProps> = ({ onOpenBooking }) => {
         {/* Bottom Bar: Explore all services CTA */}
         <div className="mt-12 text-center flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
-            to="/services"
+            href="/services"
             className="btn-teal px-6 py-3 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2"
           >
             <span>Explore All 8 Services</span>
