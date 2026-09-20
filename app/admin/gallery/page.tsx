@@ -3,21 +3,34 @@
 import React, { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { GalleryItem } from '@/lib/types';
-import { Plus, Trash2, CheckCircle, RefreshCw, Loader2, Upload } from 'lucide-react';
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  CheckCircle,
+  RefreshCw,
+  Loader2,
+  Upload,
+  Image as ImageIcon,
+  X,
+  Save,
+  AlertTriangle,
+  Sparkles,
+} from 'lucide-react';
 
 export default function AdminGalleryPage() {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const [isAdding, setIsAdding] = useState(false);
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('Kitchen');
-  const [description, setDescription] = useState('');
+  // Add / Edit Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<Partial<GalleryItem> | null>(null);
+  const [deleteConfirmItem, setDeleteConfirmItem] = useState<GalleryItem | null>(null);
 
-  const [beforeFile, setBeforeFile] = useState<File | null>(null);
-  const [afterFile, setAfterFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [uploadingBefore, setUploadingBefore] = useState(false);
+  const [uploadingAfter, setUploadingAfter] = useState(false);
 
   const fetchGallery = async () => {
     setLoading(true);
@@ -27,7 +40,7 @@ export default function AdminGalleryPage() {
       .select('*')
       .order('sort_order', { ascending: true });
 
-    if (!error && data && data.length > 0) {
+    if (!error && data) {
       setItems(data as GalleryItem[]);
     }
     setLoading(false);
@@ -39,249 +52,584 @@ export default function AdminGalleryPage() {
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleCreateGalleryItem = async (e: React.FormEvent) => {
+  const handleOpenAddModal = () => {
+    setEditingItem({
+      title: '',
+      category: 'Kitchen',
+      description: '',
+      before_image_url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80',
+      after_image_url: '/images/kitchen-cleaning.jpg',
+      is_active: true,
+      sort_order: items.length + 1,
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleOpenEditModal = (item: GalleryItem) => {
+    setEditingItem({ ...item });
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setEditingItem(null);
+  };
+
+  // Upload Before Image to Cloudinary
+  const handleUploadBefore = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingBefore(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'hari-krishna-cleaning/gallery');
+
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        setEditingItem((prev) => prev ? {
+          ...prev,
+          before_image_url: data.url,
+          before_image_public_id: data.public_id,
+        } : null);
+        showToast('Before image uploaded successfully!');
+      } else {
+        alert(data.error || 'Failed to upload before image');
+      }
+    } catch (err: any) {
+      alert('Upload error: ' + err.message);
+    } finally {
+      setUploadingBefore(false);
+    }
+  };
+
+  // Upload After Image to Cloudinary
+  const handleUploadAfter = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingAfter(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'hari-krishna-cleaning/gallery');
+
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        setEditingItem((prev) => prev ? {
+          ...prev,
+          after_image_url: data.url,
+          after_image_public_id: data.public_id,
+        } : null);
+        showToast('After image uploaded successfully!');
+      } else {
+        alert(data.error || 'Failed to upload after image');
+      }
+    } catch (err: any) {
+      alert('Upload error: ' + err.message);
+    } finally {
+      setUploadingAfter(false);
+    }
+  };
+
+  const handleSaveGalleryItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title || !beforeFile || !afterFile) {
-      showToast('Title, Before image, and After image are required.');
+    if (!editingItem?.title || !editingItem?.before_image_url || !editingItem?.after_image_url) {
+      alert('Please provide a title, before image, and after image.');
       return;
     }
 
-    setUploading(true);
+    setSaving(true);
+    const supabase = createClient();
+
+    const payload = {
+      title: editingItem.title,
+      category: editingItem.category || 'Kitchen',
+      description: editingItem.description || '',
+      before_image_url: editingItem.before_image_url,
+      before_image_public_id: editingItem.before_image_public_id || null,
+      after_image_url: editingItem.after_image_url,
+      after_image_public_id: editingItem.after_image_public_id || null,
+      is_active: editingItem.is_active ?? true,
+      sort_order: Number(editingItem.sort_order) || 0,
+      updated_at: new Date().toISOString(),
+    };
+
+    let error;
+    if (editingItem.id) {
+      const res = await supabase.from('gallery').update(payload).eq('id', editingItem.id);
+      error = res.error;
+    } else {
+      const res = await supabase.from('gallery').insert([payload]);
+      error = res.error;
+    }
+
+    if (error) {
+      alert('Error saving gallery item: ' + error.message);
+      setSaving(false);
+      return;
+    }
+
+    // Trigger instant ISR revalidation
     try {
-      // 1. Upload Before image
-      const beforeFormData = new FormData();
-      beforeFormData.append('file', beforeFile);
-      beforeFormData.append('category', 'gallery');
-
-      const beforeRes = await fetch('/api/upload', { method: 'POST', body: beforeFormData });
-      const beforeData = await beforeRes.json();
-
-      // 2. Upload After image
-      const afterFormData = new FormData();
-      afterFormData.append('file', afterFile);
-      afterFormData.append('category', 'gallery');
-
-      const afterRes = await fetch('/api/upload', { method: 'POST', body: afterFormData });
-      const afterData = await afterRes.json();
-
-      if (!beforeData.success || !afterData.success) {
-        throw new Error('Cloudinary upload failed for before/after images');
-      }
-
-      // 3. Insert into Supabase
-      const supabase = createClient();
-      const { error: dbError } = await supabase.from('gallery').insert([
-        {
-          title,
-          category,
-          description,
-          before_image_url: beforeData.secure_url,
-          before_image_public_id: beforeData.public_id,
-          after_image_url: afterData.secure_url,
-          after_image_public_id: afterData.public_id,
-          is_active: true,
-          sort_order: items.length + 1,
-        },
-      ]);
-
-      if (dbError) throw dbError;
-
-      // 4. Revalidate
+      await fetch('/api/revalidate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: '/' }),
+      });
       await fetch('/api/revalidate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path: '/gallery' }),
       });
+    } catch {}
 
-      showToast('Gallery item added successfully!');
-      setIsAdding(false);
-      setTitle('');
-      setBeforeFile(null);
-      setAfterFile(null);
-      fetchGallery();
-    } catch (err: any) {
-      showToast(`Creation error: ${err?.message || 'Failed'}`);
-    } finally {
-      setUploading(false);
-    }
+    setSaving(false);
+    handleCloseModal();
+    showToast(`Gallery item "${payload.title}" saved! Live website updated.`);
+    fetchGallery();
   };
 
   const handleDelete = async (item: GalleryItem) => {
+    const supabase = createClient();
+    const { error } = await supabase.from('gallery').delete().eq('id', item.id);
+
+    if (error) {
+      alert('Failed to delete item: ' + error.message);
+      return;
+    }
+
+    // Delete from Cloudinary asynchronously
+    if (item.before_image_public_id) {
+      fetch('/api/cloudinary/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ public_id: item.before_image_public_id }),
+      }).catch(() => {});
+    }
+    if (item.after_image_public_id) {
+      fetch('/api/cloudinary/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ public_id: item.after_image_public_id }),
+      }).catch(() => {});
+    }
+
+    // Revalidate live site
     try {
-      if (item.before_image_public_id) {
-        fetch('/api/cloudinary/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ public_id: item.before_image_public_id }),
-        });
-      }
-      if (item.after_image_public_id) {
-        fetch('/api/cloudinary/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ public_id: item.after_image_public_id }),
-        });
-      }
-
-      const supabase = createClient();
-      await supabase.from('gallery').delete().eq('id', item.id);
-
       await fetch('/api/revalidate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ path: '/gallery' }),
       });
+      await fetch('/api/revalidate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ path: '/' }),
+      });
+    } catch {}
 
-      showToast('Gallery item deleted.');
-      fetchGallery();
-    } catch (err: any) {
-      showToast('Failed to delete item.');
-    }
+    setDeleteConfirmItem(null);
+    showToast(`Gallery item "${item.title}" deleted.`);
+    fetchGallery();
   };
 
   return (
     <div className="space-y-6">
+      {/* Toast Notification */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 bg-emerald-900 border border-emerald-700 text-emerald-100 px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2 text-xs">
-          <CheckCircle className="w-4 h-4 text-emerald-400" />
+        <div className="fixed top-5 right-5 z-50 bg-emerald-950 border border-emerald-600 text-emerald-100 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-2.5 text-xs animate-bounce font-medium">
+          <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-800">
         <div>
-          <h1 className="text-2xl font-bold font-display text-white">Before &amp; After Gallery CMS</h1>
+          <div className="inline-flex items-center gap-1.5 bg-teal-950 text-teal-400 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider mb-2 border border-teal-800">
+            <Sparkles className="w-3 h-3 text-gold-400" />
+            <span>Before &amp; After Transformations CMS</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold font-display text-white">Before &amp; After Gallery</h1>
           <p className="text-xs text-slate-400 mt-1">
-            Manage real transformations displayed on the public gallery.
+            Edit before &amp; after comparison photos, categories, and descriptions displayed on the live website.
           </p>
         </div>
 
-        <button
-          onClick={() => setIsAdding(!isAdding)}
-          className="btn-gold px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2 shadow-md"
-        >
-          <Plus className="w-4 h-4" />
-          <span>{isAdding ? 'Cancel' : 'Add Gallery Item'}</span>
-        </button>
-      </div>
-
-      {isAdding && (
-        <form onSubmit={handleCreateGalleryItem} className="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4">
-          <h3 className="text-sm font-bold text-white">New Gallery Transformation</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs text-slate-300 mb-1">Title *</label>
-              <input
-                type="text"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Kitchen Chimney Oil Stain Removal"
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs text-slate-300 mb-1">Category</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-              >
-                <option value="Kitchen">Kitchen</option>
-                <option value="Bathroom">Bathroom</option>
-                <option value="Floor">Floor</option>
-                <option value="Home">Home</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="border border-slate-800 p-4 rounded-xl bg-slate-950/60">
-              <label className="block text-xs font-bold text-slate-300 mb-1">Upload Before Image *</label>
-              <input
-                type="file"
-                required
-                accept="image/*"
-                onChange={(e) => setBeforeFile(e.target.files?.[0] || null)}
-                className="text-xs text-slate-400"
-              />
-            </div>
-
-            <div className="border border-slate-800 p-4 rounded-xl bg-slate-950/60">
-              <label className="block text-xs font-bold text-slate-300 mb-1">Upload After Image *</label>
-              <input
-                type="file"
-                required
-                accept="image/*"
-                onChange={(e) => setAfterFile(e.target.files?.[0] || null)}
-                className="text-xs text-slate-400"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs text-slate-300 mb-1">Description</label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Complete degreasing and high pressure steam cleaning in Madhapur..."
-              className="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-            />
-          </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={fetchGallery}
+            className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+            title="Refresh Gallery"
+          >
+            <RefreshCw className="w-4 h-4" />
+          </button>
 
           <button
-            type="submit"
-            disabled={uploading}
-            className="btn-gold w-full py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
+            onClick={handleOpenAddModal}
+            className="btn-gold px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg"
           >
-            {uploading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Uploading both images to Cloudinary...</span>
-              </>
-            ) : (
-              <span>Save &amp; Publish Gallery Item</span>
-            )}
+            <Plus className="w-4 h-4" />
+            <span>Add Gallery Item</span>
           </button>
-        </form>
-      )}
+        </div>
+      </div>
 
       {/* Gallery Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {items.map((item) => (
-          <div key={item.id} className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden p-4 space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="relative h-28 bg-slate-950 rounded-lg overflow-hidden border border-slate-800">
-                <img src={item.before_image_url} alt="Before" className="w-full h-full object-cover" />
-                <span className="absolute bottom-1 left-1 bg-red-950 text-red-300 text-[9px] font-bold px-1.5 py-0.5 rounded">Before</span>
-              </div>
-              <div className="relative h-28 bg-slate-950 rounded-lg overflow-hidden border border-slate-800">
-                <img src={item.after_image_url} alt="After" className="w-full h-full object-cover" />
-                <span className="absolute bottom-1 right-1 bg-emerald-950 text-emerald-300 text-[9px] font-bold px-1.5 py-0.5 rounded">After</span>
-              </div>
-            </div>
-
-            <div>
-              <div className="text-[10px] font-bold text-gold-400 uppercase">{item.category}</div>
-              <h4 className="text-xs font-bold text-white truncate">{item.title}</h4>
-              <p className="text-[11px] text-slate-400 line-clamp-2 mt-1">{item.description}</p>
-            </div>
-
-            <button
-              onClick={() => handleDelete(item)}
-              className="w-full py-2 bg-red-950/60 hover:bg-red-900 text-red-300 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 border border-red-900/60"
+      {loading ? (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-16 text-center text-xs text-slate-400 flex flex-col items-center justify-center gap-3 shadow-xl">
+          <Loader2 className="w-6 h-6 animate-spin text-gold-500" />
+          <span>Loading transformations from database...</span>
+        </div>
+      ) : items.length === 0 ? (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-16 text-center text-xs text-slate-400 flex flex-col items-center justify-center gap-3 shadow-xl">
+          <ImageIcon className="w-8 h-8 text-slate-600" />
+          <span>No gallery items found. Click &quot;Add Gallery Item&quot; to create your first transformation.</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {items.map((item) => (
+            <div
+              key={item.id}
+              className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden p-4 space-y-3 flex flex-col justify-between shadow-xl hover:border-slate-700 transition-all group"
             >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Delete Item</span>
-            </button>
+              <div className="space-y-3">
+                {/* Images Comparison Grid */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="relative h-28 bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                    <img
+                      src={item.before_image_url}
+                      alt="Before"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <span className="absolute bottom-1.5 left-1.5 bg-red-950/90 text-red-300 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded backdrop-blur-sm border border-red-800">
+                      Before
+                    </span>
+                  </div>
+
+                  <div className="relative h-28 bg-slate-950 rounded-xl overflow-hidden border border-slate-800">
+                    <img
+                      src={item.after_image_url}
+                      alt="After"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <span className="absolute bottom-1.5 right-1.5 bg-emerald-950/90 text-emerald-300 text-[9px] font-extrabold uppercase px-2 py-0.5 rounded backdrop-blur-sm border border-emerald-800">
+                      After
+                    </span>
+                  </div>
+                </div>
+
+                {/* Details */}
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-gold-400 uppercase tracking-wider bg-gold-950/40 px-2 py-0.5 rounded border border-gold-800/40">
+                      {item.category}
+                    </span>
+                    <span className="text-[10px] text-slate-500 font-mono">
+                      #{item.sort_order}
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-bold text-white line-clamp-1 group-hover:text-gold-400 transition-colors">
+                    {item.title}
+                  </h4>
+                  <p className="text-[11px] text-slate-400 line-clamp-2 mt-1 leading-relaxed">
+                    {item.description || 'No description provided.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons: Edit & Delete */}
+              <div className="pt-3 border-t border-slate-800 flex items-center gap-2">
+                <button
+                  onClick={() => handleOpenEditModal(item)}
+                  className="flex-1 py-2 bg-teal-900/60 hover:bg-teal-800 text-teal-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 border border-teal-800/60 transition-colors"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                  <span>Edit Item</span>
+                </button>
+
+                <button
+                  onClick={() => setDeleteConfirmItem(item)}
+                  className="p-2 bg-red-950/60 hover:bg-red-900 text-red-300 rounded-xl text-xs font-semibold flex items-center justify-center border border-red-900/60 transition-colors"
+                  title="Delete Gallery Item"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ADD / EDIT GALLERY ITEM MODAL */}
+      {isModalOpen && editingItem && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl my-8">
+            <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold font-display text-white">
+                  {editingItem.id ? 'Edit Before / After Item' : 'Add New Before / After Item'}
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Edits will instantly update the Before &amp; After comparisons on your live website.
+                </p>
+              </div>
+              <button
+                onClick={handleCloseModal}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveGalleryItem} className="p-6 space-y-5 max-h-[75vh] overflow-y-auto">
+              {/* Title & Category */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Transformation Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editingItem.title || ''}
+                    onChange={(e) =>
+                      setEditingItem((prev) => prev ? { ...prev, title: e.target.value } : null)
+                    }
+                    placeholder="e.g. Kitchen Deep Cleaning & Degreasing"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-gold-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Category *
+                  </label>
+                  <select
+                    value={editingItem.category || 'Kitchen'}
+                    onChange={(e) =>
+                      setEditingItem((prev) => prev ? { ...prev, category: e.target.value } : null)
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-gold-500 focus:outline-none"
+                  >
+                    <option value="Kitchen">Kitchen</option>
+                    <option value="Bathroom">Bathroom</option>
+                    <option value="Floor">Floor</option>
+                    <option value="Home">Home</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                  Description of Work Done
+                </label>
+                <textarea
+                  rows={3}
+                  value={editingItem.description || ''}
+                  onChange={(e) =>
+                    setEditingItem((prev) => prev ? { ...prev, description: e.target.value } : null)
+                  }
+                  placeholder="e.g. Removed heavy oil accumulation, descaled tile grout, and polished fixtures..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-gold-500 focus:outline-none"
+                />
+              </div>
+
+              {/* Before & After Images */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 border-t border-slate-800">
+                {/* Before Image */}
+                <div className="space-y-3 p-4 rounded-2xl bg-slate-950/60 border border-slate-800">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-red-400 uppercase tracking-wider">
+                      🔴 Before Image *
+                    </span>
+                  </div>
+
+                  <div className="h-32 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden relative">
+                    <img
+                      src={editingItem.before_image_url || 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80'}
+                      alt="Before Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  <input
+                    type="text"
+                    value={editingItem.before_image_url || ''}
+                    onChange={(e) =>
+                      setEditingItem((prev) => prev ? { ...prev, before_image_url: e.target.value } : null)
+                    }
+                    placeholder="Image URL or Cloudinary Link"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs focus:border-gold-500 focus:outline-none"
+                  />
+
+                  <label className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer transition-colors">
+                    {uploadingBefore ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-red-400" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5 text-red-400" />
+                    )}
+                    <span>{uploadingBefore ? 'Uploading Before Image...' : 'Upload Before Image to Cloudinary'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingBefore}
+                      onChange={handleUploadBefore}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* After Image */}
+                <div className="space-y-3 p-4 rounded-2xl bg-slate-950/60 border border-slate-800">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                      🟢 After Image *
+                    </span>
+                  </div>
+
+                  <div className="h-32 rounded-xl bg-slate-950 border border-slate-800 overflow-hidden relative">
+                    <img
+                      src={editingItem.after_image_url || '/images/kitchen-cleaning.jpg'}
+                      alt="After Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  <input
+                    type="text"
+                    value={editingItem.after_image_url || ''}
+                    onChange={(e) =>
+                      setEditingItem((prev) => prev ? { ...prev, after_image_url: e.target.value } : null)
+                    }
+                    placeholder="Image URL or Cloudinary Link"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-xs focus:border-gold-500 focus:outline-none"
+                  />
+
+                  <label className="w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold cursor-pointer transition-colors">
+                    {uploadingAfter ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-400" />
+                    ) : (
+                      <Upload className="w-3.5 h-3.5 text-emerald-400" />
+                    )}
+                    <span>{uploadingAfter ? 'Uploading After Image...' : 'Upload After Image to Cloudinary'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingAfter}
+                      onChange={handleUploadAfter}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Sort Order & Visibility */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-800">
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Sort Order (Number)
+                  </label>
+                  <input
+                    type="number"
+                    value={editingItem.sort_order || 1}
+                    onChange={(e) =>
+                      setEditingItem((prev) => prev ? { ...prev, sort_order: parseInt(e.target.value) || 0 } : null)
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-gold-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                    Visibility
+                  </label>
+                  <select
+                    value={editingItem.is_active ? 'true' : 'false'}
+                    onChange={(e) =>
+                      setEditingItem((prev) => prev ? { ...prev, is_active: e.target.value === 'true' } : null)
+                    }
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-white text-xs focus:border-gold-500 focus:outline-none"
+                  >
+                    <option value="true">Active (Visible in Gallery)</option>
+                    <option value="false">Hidden (Draft)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={saving || uploadingBefore || uploadingAfter}
+                  className="btn-gold px-6 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 shadow-lg disabled:opacity-50"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Saving &amp; Updating Live Site...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>Save &amp; Update Live Site</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {deleteConfirmItem && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 space-y-4 shadow-2xl">
+            <div className="w-12 h-12 rounded-full bg-red-950 text-red-400 border border-red-800 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div className="text-center">
+              <h3 className="text-sm font-bold text-white">Delete Gallery Item?</h3>
+              <p className="text-xs text-slate-400 mt-1">
+                Are you sure you want to delete &quot;{deleteConfirmItem.title}&quot;? This will immediately remove it from the live website and gallery slider.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={() => setDeleteConfirmItem(null)}
+                className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirmItem)}
+                className="flex-1 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold shadow-lg transition-colors"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

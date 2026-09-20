@@ -66,9 +66,13 @@ export interface TestimonialItem {
   customer_role?: string;
   content: string;
   rating: number;
+  avatar_url?: string;
   image_url?: string;
   image_public_id?: string;
-  is_published: boolean;
+  is_published?: boolean;
+  is_active?: boolean;
+  is_featured?: boolean;
+  sort_order?: number;
   created_at: string;
   updated_at: string;
 }
@@ -77,6 +81,7 @@ export interface FAQItem {
   id: string;
   question: string;
   answer: string;
+  category?: string;
   sort_order: number;
   is_active: boolean;
   created_at: string;
